@@ -1,0 +1,152 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.Slate-1 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 50px;
+    background-color: #333;
+    min-height: 500px;
+}
+
+.Box,
+.BoxDatos,
+.BoxBorrar {
+    background-color: #1a1a1a;
+    color: #d2cfcf;
+    padding: 10px;
+    font-family: "Copperplat", serif;
+    border: 1px solid #d2cfcf;
+    border-radius: 15px;
+    width: 250px;
+    box-sizing: border-box;
+    height: 180px;
+}
+
+.BoxCompras {
+    background-color: #1a1a1a;
+    color: #d2cfcf;
+    padding: 10px;
+    font-family: "Copperplat", serif;
+    border: 1px solid #d2cfcf;
+    border-radius: 15px;
+    width: 250px;
+    box-sizing: border-box;
+    height: 180px;
+}
+
+.Boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 15px;
+    color: #1a1a1a;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Copperplate', Serif;
+    transition: all 0.2s ease;
+    background-color: #d2cfcf;
+    font-size: 14px;
+}
+
+.Boton:hover {
+    background-color: #bdbdbd;
+    color: #111;
+}
+
+.BoxCompras,
+.BoxBorrar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1a1a1a;
+    color: #d2cfcf;
+    padding: 10px;
+    font-family: "Copperplate", Serif;
+    border: 1px solid #d2cfcf;
+    border-radius: 15px;
+    width: 250px;
+    box-sizing: border-box;
+    height: 180px;
+}
+
+.BoxCompras .Boton,
+.BoxBorrar .Boton {
+  font-size: 18px;
+}
+
+.Boton-rojo {
+    background-color: #d64545;
+    /* Rojo suave */
+    color: white;
+}
+
+.Boton-rojo:hover {
+    background-color: #b73131;
+    color: #fff;
+}
+
+
+
+/* ---------------------------- */
+/*      RESPONSIVE - MOBILE     */
+/* ---------------------------- */
+@media (max-width: 768px) {
+    .Slate-1 {
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      gap: 20px;
+      height: auto;
+    }
+  
+    .Box,
+    .BoxDatos,
+    .BoxBorrar,
+    .BoxCompras {
+      width: 90%;
+      box-sizing: border-box;
+      padding: 20px;
+      text-align: center;
+    }
+  
+    .Box h3 {
+      font-size: 18px;
+      word-break: break-word;
+    }
+  
+    .BoxDatos i {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+  
+    .BoxDatos h2 {
+      font-size: 20px;
+      word-break: break-word;
+    }
+  
+    .Boton {
+      width: 100%;
+      font-size: 16px;
+      padding: 12px;
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+  
+    .BoxCompras .Boton,
+    .BoxBorrar .Boton {
+      font-size: 18px;
+      padding: 12px;
+      width: 100%;
+    }
+  }

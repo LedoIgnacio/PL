@@ -1,0 +1,127 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+.Slate-1 
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    padding: 50px;
+    background-color: #333;
+    color: #d2cfcf;
+    font-family: 'Copperplate', Serif;
+    justify-content: center;
+    min-height: 800px;
+    height: auto;
+}
+  
+.Imagenes 
+{
+    flex: 1;
+    min-width: 280px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+  
+.Imagenes img 
+{
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+  
+.Detalles 
+{
+    flex: 10;
+    min-width: 300px;
+    max-width: 600px;
+}
+  
+.Detalles h2 
+{
+    margin-top: 0;
+    font-size: 32px;
+}
+  
+select 
+{
+    margin: 10px 0 20px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Copperplate', Serif;
+    background-color: #d2cfcf;
+    color: #111;
+    border: none;
+    cursor: pointer;
+}
+  
+.Txt-Detalles 
+{
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+button
+{
+    display: inline-block;
+    font-weight: bold;
+    padding: 10px 10px;
+    font-size: 16px;
+    font-family: 'Copperplate', Serif;
+    background-color: #1a1a1a;
+    color: #d2cfcf;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .Slate-1 {
+      flex-direction: column;
+      padding: 30px 20px;
+      gap: 30px;
+    }
+    .Imagenes,
+    .Detalles {
+      min-width: 100%;
+      max-width: 100%;
+    }
+    .Detalles h2 {
+      font-size: 28px;
+      text-align: center;
+    }
+    select,
+    button {
+      width: 100%;
+      font-size: 14px;
+      padding: 12px;
+    }
+  }
+  
+  /* Móviles pequeños */
+  @media (max-width: 480px) {
+    .Slate-1 {
+      min-height: auto;
+      padding: 20px 10px;
+      gap: 20px;
+    }
+    .Detalles h2 {
+      font-size: 24px;
+    }
+    .Txt-Detalles {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .Imagenes img {
+      height: auto; /* que escale con el ancho */
+    }
+  }

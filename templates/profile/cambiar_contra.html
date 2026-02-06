@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power.Lab</title>
+    <link rel="stylesheet" href="../01-Index/index.css">
+    <link rel="stylesheet" href="Contraseña.css">
+    <!-- Cargar íconos de Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="Encabezado">
+        <div class="Titulo-container">
+            <a href="../01-Index/index.html" class="Boton-Inicio">
+                <h1 class="Titulo-header">Power.Lab</h1>
+                <i class="fas fa-dumbbell" style="color: #d2cfcf; font-size: 48px;"></i>
+            </a>
+        </div>
+        <nav class="Menu-links">
+            <a href="../07-Perfil/Perfil.html">PERFIL</a>
+            <a href="../14-Productos/Productos.html">PRODUCTOS</a>
+            <a href="../14-Productos/Productos.html">DESCUENTOS</a>
+            <a href="../18-MisCompras/MisCompras.html">MIS COMPRAS</a>
+        </nav>
+        <a href="../02-Registrarse/Registrarse.html" class="Inicio-sesion">
+            Iniciar sesión/<br>Registrarse
+        </a>
+        <a href="../16-Carrito/Carrito.html" class="Boton-carrito">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="Contador">0</span>
+        </a>
+    </header>
+
+    <div class="cambio-contraseña">
+        <h1>Cambiar contraseña</h1>
+        <p class="parrafo">Vamos a enviarte un mail para que puedas cambiar tu contraseña y volver a ingresar. Escribe
+            tu mail aqui abajo.</p>
+
+        <div class="informacion">
+            <h3>Email:</h3>
+            <form id="formCambiarContrasena">
+                <input type="text" id="mail" name="mail" placeholder="ej: tuemail@email.com" required>
+                <button type="submit"> Enviar Email</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="Pie-pagina">
+        <div class="Slogan">
+            <p>
+                <span class="Resaltado-slogan">Power.Lab</span><br>
+                Suplementación<br><br>
+                Somos personas normales como tú,<br>
+                que nos gusta el deporte y el gimnasio<br>
+                y queremos ayudarte a mejorar.
+            </p>
+        </div>
+        <div class="ANMAT">
+            <p>
+                Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br> cumpliendo
+                requisitos de seguridad, calidad y registro.
+            </p>
+        </div>
+        <div class="Metodos-pago">
+            <i class="fab fa-cc-visa"></i>
+            <i class="fab fa-cc-mastercard"></i>
+            <img src="../01-Index/mercadopago.png" alt="Mercado Pago">
+        </div>
+    </footer>
+
+    <script src="../js/cambiar-contra.js"></script>
+
+</body>
+</html>

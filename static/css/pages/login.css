@@ -1,0 +1,120 @@
+* {
+  box-sizing: border-box;
+}
+
+.Slate-1
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #333;
+    min-height: 100vh;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+form
+{
+    background-color: #1a1a1a;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    color: #d2cfcf;
+    font-family: 'Copperplate', Serif;
+    width: 400px;
+    max-width: 400px;
+}
+
+
+label
+{
+    font-size: 20px;
+    margin-bottom: 1px;
+}
+
+input
+{
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    background-color: #d2cfcf;
+    color: black;
+    cursor: pointer;
+}
+
+input:focus
+{
+    outline: 2px solid #d2cfcf;
+}
+
+button
+{
+    padding: 15px;
+    background-color: #d2cfcf;
+    color: black;
+    font-family: 'Copperplate', Serif;
+    font-size: 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.Txt-link-2,
+.Txt-link-1
+{
+    text-align: left;
+    font-size: 15px;
+    margin-top: 0px;
+    color: #d2cfcf;
+    font-family: 'Copperplate', Serif;
+}
+
+.Txt-link-2 a,
+.Txt-link-1 a
+{
+    text-decoration: underline;
+    color: #d2cfcf;
+}
+
+
+
+/* ---------------------------- */
+/*         MODO RESPONSIVE      */
+/* ---------------------------- */
+@media (max-width: 768px) {
+    .Slate-1 {
+      height: auto;
+      padding: 40px 20px;
+    }
+  
+    form {
+      width: 100%;
+      max-width: 90%;
+      padding: 20px;
+      gap: 12px;
+    }
+  
+    label {
+      font-size: 18px;
+    }
+  
+    input {
+      font-size: 14px;
+      padding: 12px;
+    }
+  
+    button {
+      font-size: 15px;
+      padding: 12px;
+    }
+  
+    .Txt-link-1,
+    .Txt-link-2 {
+      font-size: 13px;
+      text-align: center;
+    }
+  }

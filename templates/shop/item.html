@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power.Lab</title>
+    <link rel="stylesheet" href="../01-Index/index.css">
+    <link rel="stylesheet" href="Item.css">
+    <!-- Cargar íconos de Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="Encabezado">
+        <div class="Titulo-container">
+            <a href="../01-Index/index.html" class="Boton-Inicio">
+                <h1 class="Titulo-header">Power.Lab</h1>
+                <i class="fas fa-dumbbell" style="color: #d2cfcf; font-size: 48px;"></i>
+            </a>
+        </div>
+        <nav class="Menu-links">
+            <a href="../07-Perfil/Perfil.html">PERFIL</a>
+            <a href="../14-Productos/Productos.html">PRODUCTOS</a>
+            <a href="../14-Productos/Productos.html">DESCUENTOS</a>
+            <a href="../18-MisCompras/MisCompras.html">MIS COMPRAS</a>
+        </nav>
+        <a href="../02-Registrarse/Registrarse.html" class="Inicio-sesion">
+            Iniciar sesión/<br>Registrarse
+        </a>
+        <a href="../16-Carrito/Carrito.html" class="Boton-carrito">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="Contador">0</span>
+        </a>
+    </header>
+
+    <div class="Slate-1">
+        <div class="Imagenes">
+            <img src="../01-Index/WheyProducto.jpg" alt="WheyProtein">
+            <img src="../01-Index/Whey_Protein_Ficha.png" alt="WheyFichaDescripcion">
+        </div>
+
+        <div class="Detalles">
+            <p class="Txt-Detalles">
+            <h2>
+                Whey Protein
+            </h2>
+            Precio: $38.900 / Sin descuento / Envio: $3000
+            </p>
+            <label for="Sabores">Sabores:</label>
+            <select id="Sabores" name="Sabores">
+                <option value="Seleccionar">Seleccionar</option>
+                <option value="Chocolate">Chocolate</option>
+                <option value="Vainilla">Vainilla</option>
+                <option value="CookiesCream">CookiesCream</option>
+                <option value="Strawberry">Strawberry</option>
+            </select>
+            <p id="error-sabor" style="color: red; font-size: 14px;"></p>
+
+            <p class="Txt-Detalles">
+                Descripción: <br><br>
+
+                BENEFICIOS <br>
+                Whey Protein Isolate (WPI) es la forma más pura de proteína de suero que existe actualmente. <br>
+                Al sumarla a nuestra fórmula clásica (WPC + WPI) elevamos el estándar de calidad, <br>
+                asegurándote un mejor producto en cada scoop para que logres la performance que buscas. <br><br>
+
+                TRUEMADE contiene un blend de máxima pureza con una rápida absorción y una excelente calidad, <br>
+                garantizando una efectiva y rápida recuperación del tejido muscular: <br><br>
+
+                -Whey protein concentrate (WPC): perfil completo de aminoácidos esenciales, brindando la mejor calidad
+                de proteínas para aumentar la energía durante el entrenamiento. <br>
+                -Whey Protein Isolate (WPI): máxima pureza. Bajo en carbohidratos, grasas y fácil de digerir logrando
+                una mayor absorción de la proteína. <br><br>
+
+                MODO DE USO <br>
+                Dosis diaria: 1 medida (cada medida aporta 25 grs de proteina). <br>
+                Consumir 1 medida a media mañana o a media tarde, o bien, 1 medida media hora antes de entrenar o 1
+                medida media hora después de entrenar. <br>
+                Diluir cada medida (31 gramos) con 150-200 cc de leche o agua. Para lograr óptimos resultados, Ena
+                recomienda tomarlo con agua o leche fria. <br>
+            </p>
+
+            <button type="submit">Agregar al Carrito</button>
+        </div>
+    </div>
+
+    <footer class="Pie-pagina">
+        <div class="Slogan">
+            <p>
+                <span class="Resaltado-slogan">Power.Lab</span><br>
+                Suplementación<br><br>
+                Somos personas normales como tú,<br>
+                que nos gusta el deporte y el gimnasio<br>
+                y queremos ayudarte a mejorar.
+            </p>
+        </div>
+        <div class="ANMAT">
+            <p>
+                Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br> cumpliendo
+                requisitos de seguridad, calidad y registro.
+            </p>
+        </div>
+        <div class="Metodos-pago">
+            <i class="fab fa-cc-visa"></i>
+            <i class="fab fa-cc-mastercard"></i>
+            <img src="../01-Index/mercadopago.png" alt="Mercado Pago">
+        </div>
+    </footer>
+</body>
+</html>

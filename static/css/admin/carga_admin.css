@@ -1,0 +1,105 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.Cargar-Productos-Admin 
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background-color: #333;
+    min-height: 100vh;
+  }
+
+.Cargar-Productos-Admin input:focus {
+  outline: 2px solid #d2cfcf;
+}
+  
+.Cargar-Productos-Admin form 
+{
+  background-color: #1a1a1a;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+  color: #d2cfcf;
+  font-family: 'Copperplate', Serif;
+}
+  
+  /* Etiquetas */
+  .Cargar-Productos-Admin label 
+  {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  
+  /* Inputs de entrada */
+  .Cargar-Productos-Admin input[type="text"],
+  .Cargar-Productos-Admin input[type="file"],
+  .Cargar-Productos-Admin input[type="number"]
+  {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    background-color: #d2cfcf;
+    color: #111;
+  }
+  
+  /* Botón */
+  .Cargar-Productos-Admin button 
+  {
+    padding: 14px;
+    font-size: 16px;
+    font-family: 'Copperplate', Serif;
+    font-weight: bold;
+    background-color: #d2cfcf;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+
+
+
+/* ---------------------------- */
+/*      RESPONSIVE - MOBILE     */
+/* ---------------------------- */
+@media (max-width: 768px) {
+  .Cargar-Productos-Admin {
+    padding: 40px 15px;
+  }
+
+  .Cargar-Productos-Admin form {
+    padding: 25px;
+    gap: 15px;
+  }
+
+  .Cargar-Productos-Admin label {
+    font-size: 14px;
+  }
+
+  .Cargar-Productos-Admin input[type="text"],
+  .Cargar-Productos-Admin input[type="file"],
+  .Cargar-Productos-Admin input[type="number"] {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .Cargar-Productos-Admin button {
+    font-size: 15px;
+    padding: 12px;
+  }
+}

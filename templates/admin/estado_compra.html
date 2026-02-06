@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power.Lab</title>
+    <link rel="stylesheet" href="../01-Index/index.css">
+    <link rel="stylesheet" href="EstadoCompraAdmin.css">
+    <!-- Cargar íconos de Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="Encabezado">
+        <div class="Titulo-container">
+            <a href="../01-Index/index.html" class="Boton-Inicio">
+                <h1 class="Titulo-header">Power.Lab</h1>
+                <i class="fas fa-dumbbell" style="color: #d2cfcf; font-size: 48px;"></i>
+            </a>
+        </div>
+        <nav class="Menu-links">
+            <a href="../07-Perfil/Perfil.html">PERFIL</a>
+            <a href="../14-Productos/Productos.html">PRODUCTOS</a>
+            <a href="../14-Productos/Productos.html">DESCUENTOS</a>
+            <a href="../18-MisCompras/MisCompras.html">MIS COMPRAS</a>
+        </nav>
+        <a href="../02-Registrarse/Registrarse.html" class="Inicio-sesion">
+            Iniciar sesión/<br>Registrarse
+        </a>
+        <a href="../16-Carrito/Carrito.html" class="Boton-carrito">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="Contador">0</span>
+        </a>
+    </header>
+
+    <div class="container">
+        <div class="tabla-wrapper">
+            <h2>Listado de Compras</h2>
+
+            <div class="Filtro-tabla">
+                <label for="buscar">Buscar por nombre o número de orden:</label>
+                <input type="text" id="buscar" placeholder="Ej: Juan o #0001">
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Número de Orden</th>
+                        <th>Total de la Compra</th>
+                        <th>Nombre del Comprador</th>
+                        <th>Forma de Pago</th>
+                        <th>Ubicación</th>
+                        <th>Pago</th>
+                        <th>Preparación</th>
+                        <th>Envío</th>
+                        <th>Entrega</th>
+                        <th>Compras</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#0001</td>
+                        <td>$38.900</td>
+                        <td>Juan Perez</td>
+                        <td>Visa</td>
+                        <td>La Carra 1234</td>
+                        <td class="Confirmacion-de-pago">
+                            <select class="Filtro-de-pago">
+                                <option value="no-pagado">No pagado</option>
+                                <option value="pagado">Pagado</option>
+                            </select>
+                        </td>
+                        <td class="Estado-preparacion">
+                            <select class="Filtro-preparacion">
+                                <option value="no-preparado">No preparado</option>
+                                <option value="en-preparacion">En preparación</option>
+                            </select>
+                        </td>
+                        <td class="Estado-envio">
+                            <select class="Filtro-envio">
+                                <option value="no-enviado">No enviado</option>
+                                <option value="enviado">Enviado</option>
+                            </select>
+                        </td>
+                        <td class="Estado-entrega">
+                            <select class="Filtro-entrega">
+                                <option value="no-entregado">No entregado</option>
+                                <option value="entregado">Entregado</option>
+                            </select>
+                        </td>
+                        <td><a href="../18-MisCompras/MisCompras.html" class="Ver-compras">Ver</a></td>
+                    </tr>
+                    <!-- duplicar <tr> para más registros -->
+                    <tr>
+                        <td>#0002</td>
+                        <td>$38.900</td>
+                        <td>Ignacio Ledo</td>
+                        <td>Visa</td>
+                        <td>Mexico 1462</td>
+                        <td class="Confirmacion-de-pago">
+                            <select class="Filtro-de-pago">
+                                <option value="no-pagado">No pagado</option>
+                                <option value="pagado">Pagado</option>
+                            </select>
+                        </td>
+                        <td class="Estado-preparacion">
+                            <select class="Filtro-preparacion">
+                                <option value="no-preparado">No preparado</option>
+                                <option value="en-preparacion">En preparación</option>
+                            </select>
+                        </td>
+                        <td class="Estado-envio">
+                            <select class="Filtro-envio">
+                                <option value="no-enviado">No enviado</option>
+                                <option value="enviado">Enviado</option>
+                            </select>
+                        </td>
+                        <td class="Estado-entrega">
+                            <select class="Filtro-entrega">
+                                <option value="no-entregado">No entregado</option>
+                                <option value="entregado">Entregado</option>
+                            </select>
+                        </td>
+                        <td><a href="../18-MisCompras/MisCompras.html" class="Ver-compras">Ver</a></td>
+                    </tr>
+
+                    <tr>
+                        <td>#0003</td>
+                        <td>$38.900</td>
+                        <td>Alejo Pisani</td>
+                        <td>Visa</td>
+                        <td>Sargento Cabral 1234</td>
+                        <td class="Confirmacion-de-pago">
+                            <select class="Filtro-de-pago">
+                                <option value="no-pagado">No pagado</option>
+                                <option value="pagado">Pagado</option>
+                            </select>
+                        </td>
+                        <td class="Estado-preparacion">
+                            <select class="Filtro-preparacion">
+                                <option value="no-preparado">No preparado</option>
+                                <option value="en-preparacion">En preparación</option>
+                            </select>
+                        </td>
+                        <td class="Estado-envio">
+                            <select class="Filtro-envio">
+                                <option value="no-enviado">No enviado</option>
+                                <option value="enviado">Enviado</option>
+                            </select>
+                        </td>
+                        <td class="Estado-entrega">
+                            <select class="Filtro-entrega">
+                                <option value="no-entregado">No entregado</option>
+                                <option value="entregado">Entregado</option>
+                            </select>
+                        </td>
+                        <td><a href="../18-MisCompras/MisCompras.html" class="Ver-compras">Ver</a></td>
+                    </tr>
+
+                    <tr>
+                        <td>#0004</td>
+                        <td>$38.900</td>
+                        <td>Ivan Finamore</td>
+                        <td>Visa</td>
+                        <td>Cabildo 1234</td>
+                        <td class="Confirmacion-de-pago">
+                            <select class="Filtro-de-pago">
+                                <option value="no-pagado">No pagado</option>
+                                <option value="pagado">Pagado</option>
+                            </select>
+                        </td>
+                        <td class="Estado-preparacion">
+                            <select class="Filtro-preparacion">
+                                <option value="no-preparado">No preparado</option>
+                                <option value="en-preparacion">En preparación</option>
+                            </select>
+                        </td>
+                        <td class="Estado-envio">
+                            <select class="Filtro-envio">
+                                <option value="no-enviado">No enviado</option>
+                                <option value="enviado">Enviado</option>
+                            </select>
+                        </td>
+                        <td class="Estado-entrega">
+                            <select class="Filtro-entrega">
+                                <option value="no-entregado">No entregado</option>
+                                <option value="entregado">Entregado</option>
+                            </select>
+                        <td><a href="../18-MisCompras/MisCompras.html" class="Ver-compras">Ver</a></td>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer class="Pie-pagina">
+        <div class="Slogan">
+            <p>
+                <span class="Resaltado-slogan">Power.Lab</span><br>
+                Suplementación<br><br>
+                Somos personas normales como tú,<br>
+                que nos gusta el deporte y el gimnasio<br>
+                y queremos ayudarte a mejorar.
+            </p>
+        </div>
+        <div class="ANMAT">
+            <p>
+                Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br> cumpliendo
+                requisitos de seguridad, calidad y registro.
+            </p>
+        </div>
+        <div class="Metodos-pago">
+            <i class="fab fa-cc-visa"></i>
+            <i class="fab fa-cc-mastercard"></i>
+            <img src="../01-Index/mercadopago.png" alt="Mercado Pago">
+        </div>
+    </footer>
+</body>
+
+</html>

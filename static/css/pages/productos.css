@@ -1,0 +1,194 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.Separador-1
+{
+    height: 120px;
+    background-color: #d2cfcf;
+}
+
+.Txt-Separador-1
+{
+    text-align: left;
+    color: #333;
+    font-family: 'Copperplate', Serif;
+    font-size: 60px;
+    font-weight: bold;
+    margin: 0;
+    padding: 25px 0;
+    padding-left: 16px;
+    min-height: 50px;
+    background-color: #d2cfcf;
+}
+
+.Slate-1
+{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 50px;
+    height: auto;
+    padding: 35px;
+    flex-wrap: wrap;
+    background-color: #333;
+}
+
+.Filtro
+{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #1a1a1a;
+    color: #d2cfcf;
+    padding: 20px;
+    border-radius: 15px;
+    font-family: 'Copperplate', Serif;
+    border: 1px solid #d2cfcf;
+}
+
+.Filtro label
+{
+    font-size: 18px;
+}
+
+.Filtro select
+{
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 6px;
+    background-color: #d2cfcf;
+    color: #1a1a1a;
+}
+
+.Catalogo
+{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 50px;
+    flex: 1;
+}
+
+.Producto
+{
+    width: 220px;
+    background-color: #1a1a1a;
+    border: 1px solid #d2cfcf;
+    border-radius: 15px;
+    padding: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Copperplate', Serif;
+    color: #d2cfcf;
+    gap: 20px;
+}
+
+.Imagen img
+{
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.Txt
+{
+    font-size: 16px;
+    margin: 0;
+    text-align: left;
+}
+
+.Boton-compra
+{
+    display: inline-block;
+    background-color: #d2cfcf;
+    color: #1a1a1a;
+    padding: 10px 5px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+
+
+/* ---------------------------- */
+/*      RESPONSIVE - MOBILE     */
+/* ---------------------------- */
+@media (max-width: 768px) {
+
+    .Txt-Separador-1 {
+      font-size: 32px;
+      padding-left: 12px;
+      text-align: center;
+    }
+  
+    .Slate-1 {
+      flex-direction: column;
+      padding: 20px;
+      gap: 30px;
+    }
+  
+    .Filtro {
+      width: 100%;
+      padding: 15px;
+      font-size: 14px;
+    }
+  
+    .Filtro label {
+      font-size: 16px;
+    }
+  
+    .Filtro select {
+      font-size: 14px;
+      padding: 6px;
+    }
+  
+    .Catalogo {
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+  
+    .Producto {
+      width: 100%;
+      max-width: 100%;
+      font-size: 14px;
+    }
+  
+    .Imagen img {
+      height: 160px;
+    }
+  
+    .Boton-compra {
+      font-size: 16px;
+      padding: 10px;
+    }
+  
+    .Txt {
+      font-size: 14px;
+      text-align: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .Catalogo {
+      grid-template-columns: 1fr;
+    }
+  
+    .Txt-Separador-1 {
+      font-size: 26px;
+    }
+  
+    .Producto {
+      padding: 10px;
+    }
+  
+    .Imagen img {
+      height: 140px;
+    }
+  }
