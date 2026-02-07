@@ -361,7 +361,7 @@ body {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background-image: url(WheyProteinLogo.png);
+  background-image: url(../../img/logos/WheyProteinLogo.png);
   background-size: cover;
   background-position: center;
   border: 3px solid #d2cfcf;
@@ -371,7 +371,7 @@ body {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background-image: url(ena-sportLogo.jpg);
+  background-image: url(../../img/logos/ena-sportLogo.jpg);
   background-size: cover;
   background-position: center;
   border: 3px solid #d2cfcf;
@@ -381,7 +381,7 @@ body {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background-image: url(starNutririonLogo.png);
+  background-image: url(../../img/logos/starNutririonLogo.png);
   background-size: cover;
   background-position: center;
   border: 3px solid #d2cfcf;
@@ -391,7 +391,7 @@ body {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background-image: url(GrangerLogo.jpg);
+  background-image: url(../../img/logos/GrangerLogo.jpg);
   background-size: cover;
   background-position: center;
   border: 3px solid #d2cfcf;
