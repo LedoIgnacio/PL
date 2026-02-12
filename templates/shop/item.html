@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Power.Lab</title>
-    <link rel="stylesheet" href="../../static/css/main/index.css">
-    <link rel="stylesheet" href="../../static/css/pages/item.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/item.css') }}">
     <!-- Cargar íconos de Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -14,21 +14,32 @@
 <body>
     <header class="Encabezado">
         <div class="Titulo-container">
-            <a href="../public/index.html" class="Boton-Inicio">
+            <a href="{{ url_for('index') }}" class="Boton-Inicio">
                 <h1 class="Titulo-header">Power.Lab</h1>
                 <i class="fas fa-dumbbell" style="color: #d2cfcf; font-size: 48px;"></i>
             </a>
         </div>
         <nav class="Menu-links">
-            <a href="../profile/perfil.html">PERFIL</a>
-            <a href="../shop/productos.html">PRODUCTOS</a>
-            <a href="../shop/productos.html">DESCUENTOS</a>
-            <a href="../shop/mis_compras.html">MIS COMPRAS</a>
+            <a href="{{ url_for('perfil') }}">PERFIL</a>
+            <a href="{{ url_for('productos') }}">PRODUCTOS</a>
+            <a href="{{ url_for('productos') }}">DESCUENTOS</a>
+            <a href="{{ url_for('mis_compras') }}">MIS COMPRAS</a>
         </nav>
-        <a href="../auth/registrarse.html" class="Inicio-sesion">
-            Iniciar sesión/<br>Registrarse
-        </a>
-        <a href="../shop/carrito.html" class="Boton-carrito">
+        {% if session.get("user_id") %}
+            <span class="Inicio-sesion">
+                {% if session.get("user_tipo") == "admin" %}
+                    ADMIN: Hola {{ session.get("user_nombre") }}
+                {% else %}
+                    Hola {{ session.get("user_nombre") }}
+                {% endif %}
+                   <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
+            </span>
+            {% else %}
+                <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
+                    Iniciar sesión/<br>Registrarse
+                </a>
+            {% endif %}
+        <a href="{{ url_for('carrito') }}" class="Boton-carrito">
             <i class="fa-solid fa-cart-shopping"></i>
             <span class="Contador">0</span>
         </a>
@@ -36,16 +47,18 @@
 
     <div class="Slate-1">
         <div class="Imagenes">
-            <img src="../../static/img/roductos/WheyProducto.jpg" alt="WheyProtein">
-            <img src="../../static/img/roductos/Whey_Protein_Ficha.png" alt="WheyFichaDescripcion">
+            {% set img = (p[6] or "") %}
+            {% if img.startswith("http") %}
+                <img src="{{ img }}" alt="{{ p[1] }}">
+            {% else %}
+                <img src="{{ url_for('static', filename='img/productos/' ~ img) }}" alt="{{ p[1] }}">
+            {% endif %}
         </div>
 
         <div class="Detalles">
             <p class="Txt-Detalles">
-            <h2>
-                Whey Protein
-            </h2>
-            Precio: $38.900 / Sin descuento / Envio: $3000
+                <h2>{{ p[1] }}</h2>
+                Precio: ${{ p[4] }} / Envio: $3000
             </p>
             <label for="Sabores">Sabores:</label>
             <select id="Sabores" name="Sabores">
@@ -59,26 +72,7 @@
 
             <p class="Txt-Detalles">
                 Descripción: <br><br>
-
-                BENEFICIOS <br>
-                Whey Protein Isolate (WPI) es la forma más pura de proteína de suero que existe actualmente. <br>
-                Al sumarla a nuestra fórmula clásica (WPC + WPI) elevamos el estándar de calidad, <br>
-                asegurándote un mejor producto en cada scoop para que logres la performance que buscas. <br><br>
-
-                TRUEMADE contiene un blend de máxima pureza con una rápida absorción y una excelente calidad, <br>
-                garantizando una efectiva y rápida recuperación del tejido muscular: <br><br>
-
-                -Whey protein concentrate (WPC): perfil completo de aminoácidos esenciales, brindando la mejor calidad
-                de proteínas para aumentar la energía durante el entrenamiento. <br>
-                -Whey Protein Isolate (WPI): máxima pureza. Bajo en carbohidratos, grasas y fácil de digerir logrando
-                una mayor absorción de la proteína. <br><br>
-
-                MODO DE USO <br>
-                Dosis diaria: 1 medida (cada medida aporta 25 grs de proteina). <br>
-                Consumir 1 medida a media mañana o a media tarde, o bien, 1 medida media hora antes de entrenar o 1
-                medida media hora después de entrenar. <br>
-                Diluir cada medida (31 gramos) con 150-200 cc de leche o agua. Para lograr óptimos resultados, Ena
-                recomienda tomarlo con agua o leche fria. <br>
+                {{ p[3] }}
             </p>
 
             <button type="submit">Agregar al Carrito</button>
@@ -104,7 +98,7 @@
         <div class="Metodos-pago">
             <i class="fab fa-cc-visa"></i>
             <i class="fab fa-cc-mastercard"></i>
-            <img src="../../static/img/logos/mercadopago.png" alt="Mercado Pago">
+            <img src="{{ url_for('static', filename='img/logos/mercadopago.png') }}" alt="Mercado Pago">
         </div>
     </footer>
 </body>

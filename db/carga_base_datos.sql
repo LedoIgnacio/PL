@@ -107,7 +107,3 @@ usuario.apellido,
 pedido.fecha_hora
 FROM pedido
 INNER JOIN usuario ON pedido.id_usuario = usuario.id;
-
-
-
-

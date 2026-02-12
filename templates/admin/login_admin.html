@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Power.Lab</title>
-    <link rel="stylesheet" href="../../static/css/main/index.css">
-    <link rel="stylesheet" href="../../static/css/admin/login_admin.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/login_admin.css') }}">
 
     <!-- Cargar íconos de Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -15,39 +15,51 @@
 <body>
     <header class="Encabezado">
         <div class="Titulo-container">
-            <a href="../public/index.html" class="Boton-Inicio">
+            <a href="{{ url_for('index') }}" class="Boton-Inicio">
                 <h1 class="Titulo-header">Power.Lab</h1>
                 <i class="fas fa-dumbbell" style="color: #d2cfcf; font-size: 48px;"></i>
             </a>
         </div>
         <nav class="Menu-links">
-            <a href="../profile/perfil.html">PERFIL</a>
-            <a href="../shop/productos.html">PRODUCTOS</a>
-            <a href="../shop/productos.html">DESCUENTOS</a>
-            <a href="../shop/mis_compras.html">MIS COMPRAS</a>
+            <a href="{{ url_for('perfil') }}">PERFIL</a>
+            <a href="{{ url_for('productos') }}">PRODUCTOS</a>
+            <a href="{{ url_for('productos') }}">DESCUENTOS</a>
+            <a href="{{ url_for('mis_compras') }}">MIS COMPRAS</a>
         </nav>
-        <a href="../auth/registrarse.html" class="Inicio-sesion">
-            Iniciar sesión/<br>Registrarse
-        </a>
-        <a href="../shop/carrito.html" class="Boton-carrito">
+        {% if session.get("user_id") %}
+            <span class="Inicio-sesion">
+                {% if session.get("user_tipo") == "admin" %}
+                    ADMIN: Hola {{ session.get("user_nombre") }}
+                {% else %}
+                    Hola {{ session.get("user_nombre") }}
+                {% endif %}
+                   <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
+            </span>
+            {% else %}
+                <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
+                    Iniciar sesión/<br>Registrarse
+                </a>
+            {% endif %}
+
+        <a href="{{ url_for('carrito') }}" class="Boton-carrito">
             <i class="fa-solid fa-cart-shopping"></i>
             <span class="Contador">0</span>
         </a>
     </header>
       
     <div class="Slate-1">
-        <form action="#" method="post" onsubmit="return false;">
+        {% if error %}
+            <p style="color:red; margin-bottom:10px;">{{ error }}</p>
+        {% endif %}
+        <form method="POST" action="{{ url_for('admin_login_post_route') }}">
             <label for="Email">Correo electronico:</label>
             <input type="text" name="email" id="Email"><br><br>
             <label for="Clave">Contraseña:</label>
-            <input type="password" name="clave" id="Clave">
+            <input type="password" name="pass" id="Clave">
             <p class="Txt-link-1">
                 Olvidaste tu contraseña ? <a href="#">Cambiar contraseña</a>
             </p><br>
             <button type="submit">Iniciar Sesión</button>
-            <p class="Txt-link-2">
-                No tenes cuenta ? <a href="registrarse_admin.html">Registrarse</a>
-            </p>
         </form>
     </div>
 
@@ -70,12 +82,8 @@
         <div class="Metodos-pago">
             <i class="fab fa-cc-visa"></i>
             <i class="fab fa-cc-mastercard"></i>
-            <img src="../../static/img/logos/mercadopago.png" alt="Mercado Pago">
+            <img src="{{ url_for('static', filename='img/logos/mercadopago.png') }}" alt="Mercado Pago">
         </div>
     </footer>
-
-    <script src="../../static/js/header.js"></script>
-    <script src="../../static/js/iniciar_sesion_admin.js"></script>
-
 </body>
 </html>

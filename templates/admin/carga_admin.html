@@ -25,9 +25,21 @@
             <a href="../shop/productos.html">DESCUENTOS</a>
             <a href="../shop/mis_compras.html">MIS COMPRAS</a>
         </nav>
-        <a href="../auth/registrarse.html" class="Inicio-sesion">
-            Iniciar sesión/<br>Registrarse
-        </a>
+        {% if session.get("user_id") %}
+            <span class="Inicio-sesion">
+                {% if session.get("user_tipo") == "admin" %}
+                    ADMIN: Hola {{ session.get("user_nombre") }}
+                {% else %}
+                    Hola {{ session.get("user_nombre") }}
+                {% endif %}
+                   <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
+            </span>
+            {% else %}
+                <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
+                    Iniciar sesión/<br>Registrarse
+                </a>
+            {% endif %}
+
         <a href="../shop/carrito.html" class="Boton-carrito">
             <i class="fa-solid fa-cart-shopping"></i>
             <span class="Contador">0</span>
@@ -53,6 +65,14 @@
 
             <button type="submit">Cargar Producto</button>
         </form>
+    </div>
+
+    <div style="margin: 15px 0;">
+        <a href="{{ url_for('admin_carga_route') }}">Carga Admin</a>
+        <span> | </span>
+        <a href="{{ url_for('admin_estado_compra_route') }}">Estado de compras</a>
+        <span> | </span>
+        <a href="{{ url_for('logout') }}">Logout</a>
     </div>
 
     <footer class="Pie-pagina">

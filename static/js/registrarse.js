@@ -108,7 +108,7 @@ function validarPassword() {
     return true;
 }
 
-function validarFormularioRegistro(evento) {
+async function validarFormularioRegistro(evento) {
     evento.preventDefault();
 
     var okNombre = validarNombre();
@@ -117,12 +117,69 @@ function validarFormularioRegistro(evento) {
     var okEmail = validarEmail();
     var okPassword = validarPassword();
 
-    if (okNombre && okApellido && okDireccion && okEmail && okPassword) {
-        usuarioNombre = document.getElementById("Nombre").value + " " + document.getElementById("Apellido").value;
-        if (typeof actualizarHeader === "function") {
-            actualizarHeader();
+    if (!(okNombre && okApellido && okDireccion && okEmail && okPassword)) {
+        return;
+    }
+
+    const nombre = document.getElementById("Nombre").value.trim();
+    const apellido = document.getElementById("Apellido").value.trim();
+    const email = document.getElementById("Email").value.trim();
+    const direccion = document.getElementById("Direccion").value.trim();
+    const telefono = document.getElementById("Telefono").value.trim();
+    const pass = document.getElementById("Clave1").value;
+    const pass2 = document.getElementById("Clave2").value;
+
+    // Mensaje general (crea si no existe)
+    let msg = document.getElementById("registro-msg");
+    if (!msg) {
+        msg = document.createElement("p");
+        msg.id = "registro-msg";
+        msg.style.marginTop = "10px";
+        msg.style.color = "red";
+        const form = document.querySelector("form");
+        form.appendChild(msg);
+    }
+    msg.textContent = "";
+
+    try {
+        const resp = await fetch("/api/registrarse", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                nombre,
+                apellido,
+                email,
+                direccion,
+                telefono,
+                pass,
+                pass2
+            })
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (resp.ok && data.ok) {
+            msg.style.color = "green";
+            msg.textContent = "Registro exitoso. Redirigiendo a login...";
+            document.querySelector("form").reset();
+
+            // opcional: header local (si lo usás)
+            usuarioNombre = nombre + " " + apellido;
+            if (typeof actualizarHeader === "function") {
+                actualizarHeader();
+            }
+
+            setTimeout(() => {
+                window.location.href = data.redirect || "/login";
+            }, 700);
+            return;
         }
-        document.querySelector("form").reset();
+
+        msg.style.color = "red";
+        msg.textContent = data.msg || "No se pudo registrar.";
+    } catch (e) {
+        msg.style.color = "red";
+        msg.textContent = "No se pudo conectar con el servidor.";
     }
 }
 

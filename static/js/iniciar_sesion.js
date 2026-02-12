@@ -22,12 +22,8 @@ function validarPassword(idInput, idError) {
     var pass = document.getElementById(idInput).value;
     var error = "";
 
-    if (pass.length < 6) {
-        error = "Debe tener al menos 6 caracteres.";
-    } else if (!/[A-Z]/.test(pass)) {
-        error = "Debe contener al menos una mayúscula.";
-    } else if (!/[0-9]/.test(pass)) {
-        error = "Debe contener al menos un número.";
+    if (pass.trim() === "") {
+        error = "Debe ingresar una contraseña.";
     }
 
     var span = document.getElementById(idError);
@@ -37,19 +33,58 @@ function validarPassword(idInput, idError) {
     return error === "";
 }
 
-function validarFormularioLogin(evento) {
+async function validarFormularioLogin(evento) {
     var valido = true;
 
     if (!validarEmail("Email", "errorEmail")) valido = false;
     if (!validarPassword("Clave", "errorClave")) valido = false;
 
+    // Siempre frenamos el submit normal (porque usamos AJAX)
+    evento.preventDefault();
+
     if (!valido) {
-        evento.preventDefault();
-    } else {
-        usuarioEmail = document.getElementById("Email").value;
-        if (typeof actualizarHeader === "function") {
-            actualizarHeader();
+        return;
+    }
+
+    // Si pasa validación -> hacemos login real contra Flask
+    const email = document.getElementById("Email").value.trim();
+    const pass = document.getElementById("Clave").value;
+
+    // Mensaje general (lo creamos si no existe)
+    let msg = document.getElementById("login-msg");
+    if (!msg) {
+        msg = document.createElement("p");
+        msg.id = "login-msg";
+        msg.style.marginTop = "10px";
+        msg.style.color = "red";
+        const form = document.querySelector("form");
+        form.appendChild(msg);
+    }
+    msg.textContent = "";
+
+    try {
+        const resp = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, pass })
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (resp.ok && data.ok) {
+            // Si querés mantener esto:
+            usuarioEmail = email;
+            if (typeof actualizarHeader === "function") {
+                actualizarHeader();
+            }
+
+            window.location.href = data.redirect || "/";
+            return;
         }
+
+        msg.textContent = data.msg || "Email o contraseña incorrectos.";
+    } catch (e) {
+        msg.textContent = "No se pudo conectar con el servidor.";
     }
 }
 
