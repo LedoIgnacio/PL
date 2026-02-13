@@ -16,6 +16,13 @@ from controller import (
     auth_login_api,
     auth_registrarse_api,
     shop_item,
+
+    # carrito AJAX
+    cart_get_api,
+    cart_add_api,
+    cart_update_api,
+    cart_remove_api,
+    cart_clear_api,
 )
 
 def route(app):
@@ -87,3 +94,27 @@ def route(app):
     @app.route("/item/<int:id_producto>", methods=["GET"], endpoint="item")
     def item_route(id_producto):
         return shop_item(id_producto)
+
+    # =========================
+    # API CARRITO (AJAX)
+    # =========================
+
+    @app.route("/api/cart/get", methods=["GET"])
+    def api_cart_get():
+        return cart_get_api()
+
+    @app.route("/api/cart/add", methods=["POST"])
+    def api_cart_add():
+        return cart_add_api()
+
+    @app.route("/api/cart/update", methods=["POST"])
+    def api_cart_update():
+        return cart_update_api()
+
+    @app.route("/api/cart/remove", methods=["POST"])
+    def api_cart_remove():
+        return cart_remove_api()
+
+    @app.route("/api/cart/clear", methods=["POST"])
+    def api_cart_clear():
+        return cart_clear_api()

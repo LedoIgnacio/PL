@@ -12,10 +12,14 @@ class UsuarioModel:
         return res[0] if res else None
 
     @staticmethod
-    def obtener_por_id(configDB, id_usuario):
-        sql = "SELECT * FROM usuario WHERE id = %s"
-        val = (id_usuario,)
-        res = selectDB(configDB, sql, val)
+    def obtener_por_id(configDB, user_id):
+        sql = """
+            SELECT id, nombre, apellido, email, telefono, direccion, pass, tipo_usuario
+            FROM usuario
+            WHERE id = %s
+            LIMIT 1
+        """
+        res = selectDB(configDB, sql, (user_id,))
         return res[0] if res else None
 
     @staticmethod

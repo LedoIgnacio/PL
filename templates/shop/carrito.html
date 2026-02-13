@@ -1,101 +1,116 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power.Lab</title>
-    <link rel="stylesheet" href="../../static/css/main/index.css">
-    <link rel="stylesheet" href="../../static/css/pages/carrito.css">
-    <!-- Cargar íconos de Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power.Lab</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main/index.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/carrito.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
-    <header class="Encabezado">
-        <div class="Titulo-container">
-            <a href="../public/index.html" class="Boton-Inicio">
-                <h1 class="Titulo-header">Power.Lab</h1>
-                <i class="fas fa-dumbbell" style="color: #d2cfcf; font-size: 48px;"></i>
-            </a>
-        </div>
-        <nav class="Menu-links">
-            <a href="../profile/perfil.html">PERFIL</a>
-            <a href="../shop/productos.html">PRODUCTOS</a>
-            <a href="../shop/productos.html">DESCUENTOS</a>
-            <a href="../shop/mis_compras.html">MIS COMPRAS</a>
-        </nav>
-        {% if session.get("user_id") %}
-            <span class="Inicio-sesion">
-                {% if session.get("user_tipo") == "admin" %}
-                    ADMIN: Hola {{ session.get("user_nombre") }}
-                {% else %}
-                    Hola {{ session.get("user_nombre") }}
-                {% endif %}
-                   <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
-            </span>
-            {% else %}
-                <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
-                    Iniciar sesión/<br>Registrarse
-                </a>
-            {% endif %}
-        <a href="../shop/carrito.html" class="Boton-carrito">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span class="Contador">0</span>
-        </a>
-    </header>
+  <header class="Encabezado">
+    <div class="Titulo-container">
+      <a href="{{ url_for('index') }}" class="Boton-Inicio">
+        <h1 class="Titulo-header">Power.Lab</h1>
+        <i class="fas fa-dumbbell" style="color: #d2cfcf; font-size: 48px;"></i>
+      </a>
+    </div>
+
+    <nav class="Menu-links">
+      <a href="{{ url_for('perfil') }}">PERFIL</a>
+      <a href="{{ url_for('productos') }}">PRODUCTOS</a>
+      <a href="{{ url_for('productos') }}">DESCUENTOS</a>
+      <a href="{{ url_for('mis_compras') }}">MIS COMPRAS</a>
+    </nav>
+
+    {% if session.get("user_id") %}
+      <span class="Inicio-sesion">
+        {% if session.get("user_tipo") == "admin" %}
+          ADMIN: Hola {{ session.get("user_nombre") }}
+        {% else %}
+          Hola {{ session.get("user_nombre") }}
+        {% endif %}
+        <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
+      </span>
+    {% else %}
+      <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
+        Iniciar sesión/<br>Registrarse
+      </a>
+    {% endif %}
+
+    <a href="{{ url_for('carrito') }}" class="Boton-carrito">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span class="Contador" id="cartCount">{{ count if count else 0 }}</span>
+    </a>
+  </header>
 
   <div class="Separador-1">
-    <p class="Txt-Separador-1">
-      MI CARRITO
-    </p>
+    <p class="Txt-Separador-1">MI CARRITO</p>
   </div>
 
-  <div class="Carrito">
-    <div class="Item-carrito">
-      <img src="../../static/img/productos/EnaCreatina.jpg" alt="EnaCreatina">
-      <div class="Info">
-        <h3>Creatina Micronizada</h3>
-        <p>Precio: $38.000</p>
-        <div class="Cantidad-control">
-          <button class="btn-cantidad" onclick="restarCantidad(this)">-</button>
-          <input type="number" value="1" min="1" class="input-cantidad">
-          <button class="btn-cantidad" onclick="sumarCantidad(this)">+</button>
-        </div>
-      </div>
-      <button class="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+  <div class="Carrito" id="carritoRoot">
+
+    <div class="Lista-productos" id="listaProductos">
+      {% if items and items|length > 0 %}
+        {% for it in items %}
+          <div class="Item-carrito" data-key="{{ it.key }}">
+            <img src="{{ it.imagen }}" alt="{{ it.nombre }}">
+
+            <div class="Info">
+              <h3>{{ it.nombre }}</h3>
+              <p>Sabor: {{ it.sabor }}</p>
+              <p>Precio: ${{ it.precio }}</p>
+
+              <div class="Cantidad-control">
+                <button class="btn-cantidad" data-action="dec">-</button>
+                <input type="number" value="{{ it.cantidad }}" min="1" class="input-cantidad">
+                <button class="btn-cantidad" data-action="inc">+</button>
+              </div>
+            </div>
+
+            <button class="Eliminar" data-action="remove">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p style="color:white; padding: 20px;">Tu carrito está vacío.</p>
+      {% endif %}
     </div>
 
     <div class="Resumen">
       <div class="Resumen-contenido">
-        <p>Total: <strong>$38.000</strong></p>
-        <a href="pago.html" class="Boton-pago">Finalizar Compra</a>
+        <p>Total: <strong>$<span id="cartTotal">{{ total if total else 0 }}</span></strong></p>
+        <a href="{{ url_for('pago') }}" class="Boton-pago">Finalizar Compra</a>
       </div>
     </div>
   </div>
 
   <footer class="Pie-pagina">
-        <div class="Slogan">
-            <p>
-                <span class="Resaltado-slogan">Power.Lab</span><br>
-                Suplementación<br><br>
-                Somos personas normales como tú,<br>
-                que nos gusta el deporte y el gimnasio<br>
-                y queremos ayudarte a mejorar.
-            </p>
-        </div>
-        <div class="ANMAT">
-            <p>
-                Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br> cumpliendo
-                requisitos de seguridad, calidad y registro.
-            </p>
-        </div>
-        <div class="Metodos-pago">
-            <i class="fab fa-cc-visa"></i>
-            <i class="fab fa-cc-mastercard"></i>
-            <img src="../../static/img/logos/mercadopago.png" alt="Mercado Pago">
-        </div>
-    </footer>
-</body>
+    <div class="Slogan">
+      <p>
+        <span class="Resaltado-slogan">Power.Lab</span><br>
+        Suplementación<br><br>
+        Somos personas normales como tú,<br>
+        que nos gusta el deporte y el gimnasio<br>
+        y queremos ayudarte a mejorar.
+      </p>
+    </div>
+    <div class="ANMAT">
+      <p>
+        Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br>
+        cumpliendo requisitos de seguridad, calidad y registro.
+      </p>
+    </div>
+    <div class="Metodos-pago">
+      <i class="fab fa-cc-visa"></i>
+      <i class="fab fa-cc-mastercard"></i>
+      <img src="{{ url_for('static', filename='img/logos/mercadopago.png') }}" alt="Mercado Pago">
+    </div>
+  </footer>
 
+  <script src="{{ url_for('static', filename='js/carrito.js') }}"></script>
+</body>
 </html>

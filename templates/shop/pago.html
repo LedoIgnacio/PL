@@ -5,26 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Power.Lab</title>
-    <link rel="stylesheet" href="../../static/css/main/index.css">
-    <link rel="stylesheet" href="../../static/css/pages/pago.css">
-    <!-- Cargar íconos de Font Awesome -->
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/pago.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
     <header class="Encabezado">
         <div class="Titulo-container">
-            <a href="../public/index.html" class="Boton-Inicio">
+            <a href="{{ url_for('index') }}" class="Boton-Inicio">
                 <h1 class="Titulo-header">Power.Lab</h1>
                 <i class="fas fa-dumbbell" style="color: #d2cfcf; font-size: 48px;"></i>
             </a>
         </div>
+
         <nav class="Menu-links">
-            <a href="../profile/perfil.html">PERFIL</a>
-            <a href="../shop/productos.html">PRODUCTOS</a>
-            <a href="../shop/productos.html">DESCUENTOS</a>
-            <a href="../shop/mis_compras.html">MIS COMPRAS</a>
+            <a href="{{ url_for('perfil') }}">PERFIL</a>
+            <a href="{{ url_for('productos') }}">PRODUCTOS</a>
+            <a href="{{ url_for('productos') }}">DESCUENTOS</a>
+            <a href="{{ url_for('mis_compras') }}">MIS COMPRAS</a>
         </nav>
+
         {% if session.get("user_id") %}
             <span class="Inicio-sesion">
                 {% if session.get("user_tipo") == "admin" %}
@@ -32,32 +34,50 @@
                 {% else %}
                     Hola {{ session.get("user_nombre") }}
                 {% endif %}
-                   <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
+                <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
             </span>
-            {% else %}
-                <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
-                    Iniciar sesión/<br>Registrarse
-                </a>
-            {% endif %}
-        <a href="../shop/carrito.html" class="Boton-carrito">
+        {% else %}
+            <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
+                Iniciar sesión/<br>Registrarse
+            </a>
+        {% endif %}
+
+        <a href="{{ url_for('carrito') }}" class="Boton-carrito">
             <i class="fa-solid fa-cart-shopping"></i>
-            <span class="Contador">0</span>
+            <span class="Contador">{{ count if count else 0 }}</span>
         </a>
     </header>
 
     <div class="Slate">
         <h1 class="Titulo">COMPRA</h1><br>
+
         <h3>Dirección:</h3>
-        <p id="Direccion-cargada">La Carra 1234, CABA</p>
+        <p id="Direccion-cargada">
+            {% if direccion %}
+                {{ direccion }}
+            {% else %}
+                (No tenés dirección cargada en tu perfil)
+            {% endif %}
+        </p>
+
         <br>
+
         <h3>Total a pagar:</h3>
-        <p id="Total-pagar">$38.000</p>
+        <p id="Total-pagar">
+            ${{ total if total else 0 }}
+        </p>
+
         <br>
-        <p class="Instruccion"><strong>Por favor transferir el monto al cvu: 000000123456789101112131<br>
-            y redirigirse a "Mis compras" donde al confirmar el pago, el vendedor
-            actualizara el estado de su pedido.
-        </strong></p>
-        <a href="mis_compras.html" class="Boton-Redireccion">Mis Compras</a>
+
+        <p class="Instruccion">
+            <strong>
+                Por favor transferir el monto al cvu: 000000123456789101112131<br>
+                y redirigirse a "Mis compras" donde al confirmar el pago, el vendedor
+                actualizará el estado de su pedido.
+            </strong>
+        </p>
+
+        <a href="{{ url_for('mis_compras') }}" class="Boton-Redireccion">Mis Compras</a>
     </div>
 
     <footer class="Pie-pagina">
@@ -72,15 +92,16 @@
         </div>
         <div class="ANMAT">
             <p>
-                Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br> cumpliendo
-                requisitos de seguridad, calidad y registro.
+                Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br>
+                cumpliendo requisitos de seguridad, calidad y registro.
             </p>
         </div>
         <div class="Metodos-pago">
             <i class="fab fa-cc-visa"></i>
             <i class="fab fa-cc-mastercard"></i>
-            <img src="../../static/img/logos/mercadopago.png" alt="Mercado Pago">
+            <img src="{{ url_for('static', filename='img/logos/mercadopago.png') }}" alt="Mercado Pago">
         </div>
     </footer>
 </body>
+
 </html>

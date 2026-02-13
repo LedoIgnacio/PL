@@ -3,14 +3,86 @@ from app.config_db import POWERLAB_DB
 from app.models.usuario_model import UsuarioModel
 from app.models.producto_model import ProductoModel
 
+# ============================================================
+# CARRITO (SESSION) - estilo simple, sin DB todavía
+# ============================================================
+
+def _get_cart():
+    """
+    Estructura en session:
+    session["cart"] = {
+        "<id_producto>:<sabor_lower>": {
+            "key": str,
+            "producto_id": int,
+            "sabor": str,
+            "nombre": str,
+            "marca": str,
+            "precio": float|int,
+            "imagen": str,
+            "cantidad": int
+        },
+        ...
+    }
+    """
+    return session.get("cart", {})
+
+def _set_cart(cart):
+    session["cart"] = cart
+    session.modified = True
+
+def _cart_totals(cart):
+    """
+    Devuelve SIEMPRE 3 valores:
+    items: lista de dicts
+    total: suma precio*cantidad
+    count: suma cantidades (contador del carrito)
+    """
+    items = list(cart.values())
+    total = 0
+    count = 0
+
+    for it in items:
+        # compat: si quedó algo viejo con qty, lo toma igual
+        cant = it.get("cantidad", it.get("qty", 1))
+
+        # normalizo para adelante
+        it["cantidad"] = cant
+        if "qty" in it:
+            it.pop("qty", None)
+
+        precio = it.get("precio", 0)
+        total += (precio * cant)
+        count += cant
+
+    return items, total, count
+
+def _img_url(img_value):
+    """
+    Normaliza imagen para que el HTML pueda usarla directo.
+    Si en DB guardás:
+      - URL completa => la usa
+      - nombre de archivo => arma /static/img/productos/<archivo>
+    """
+    img = (img_value or "").strip()
+    if img.startswith("http"):
+        return img
+    return "/static/img/productos/" + img
+
+def _require_login_json():
+    if "user_id" not in session:
+        return jsonify({"ok": False, "msg": "No logueado", "redirect": "/login"}), 401
+    return None
+
+
+# =========================
+# PÁGINAS GENERALES
+# =========================
 
 def home():
     return render_template("public/index.html")
 
-
 def auth_registrarse():
     return render_template("auth/registrarse.html")
-
 
 def profile_perfil():
     if "user_id" not in session:
@@ -18,13 +90,16 @@ def profile_perfil():
     return render_template("profile/perfil.html")
 
 
+# =========================
+# CATÁLOGO
+# =========================
+
 def shop_productos():
     # /productos?categoria=proteina&marca=ena&sabor=chocolate
     categoria = (request.args.get("categoria") or "").strip().lower()
     marca = (request.args.get("marca") or "").strip().lower()
     sabor = (request.args.get("sabor") or "").strip().lower()
 
-    # normalizar vacíos
     if categoria in ("", "todos"):
         categoria = None
     if marca in ("", "todas"):
@@ -32,7 +107,6 @@ def shop_productos():
     if sabor in ("", "todas"):
         sabor = None
 
-    # 1 SOLO query (el model ya arma WHERE dinámico)
     productos = ProductoModel.listar_unicos(
         POWERLAB_DB,
         categoria=categoria,
@@ -49,6 +123,10 @@ def shop_productos():
     )
 
 
+# =========================
+# ITEM
+# =========================
+
 def shop_item(id_producto):
     producto = ProductoModel.obtener_unico_por_id(POWERLAB_DB, id_producto)
     if not producto:
@@ -57,24 +135,50 @@ def shop_item(id_producto):
     sabores_rows = ProductoModel.listar_sabores_por_id(POWERLAB_DB, id_producto)
     sabores = [row[0] for row in sabores_rows] if sabores_rows else []
 
-    # por si querés que llegue preseleccionado desde la URL
-    sabor_sel = (request.args.get("sabor") or "").strip().lower() or None
-    if sabor_sel and sabor_sel not in [s.lower() for s in sabores]:
+    sabor_sel = (request.args.get("sabor") or "").strip()
+    if sabor_sel and sabor_sel.lower() not in [s.lower() for s in sabores]:
         sabor_sel = None
 
     return render_template("shop/item.html", p=producto, sabores=sabores, sabor_sel=sabor_sel)
 
 
+# =========================
+# CARRITO (PÁGINA)
+# =========================
+
 def shop_carrito():
     if "user_id" not in session:
         return redirect(url_for("login_get"))
-    return render_template("shop/carrito.html")
+
+    cart = _get_cart()
+    items, total, count = _cart_totals(cart)
+
+    return render_template("shop/carrito.html", items=items, total=total, count=count)
 
 
 def shop_pago():
     if "user_id" not in session:
         return redirect(url_for("login_get"))
-    return render_template("shop/pago.html")
+
+    cart = _get_cart()
+    items, total, count = _cart_totals(cart)
+
+    # dirección desde DB
+    user_id = session.get("user_id")
+    user = UsuarioModel.obtener_por_id(POWERLAB_DB, user_id)  # AJUSTÁ si tu método se llama distinto
+
+    # ===== AJUSTAR ÍNDICE DE DIRECCIÓN =====
+    # Depende del SELECT de tu UsuarioModel.obtener_por_id()
+    # Ejemplo típico: (id, nombre, apellido, email, telefono, direccion, pass, tipo_usuario)
+    # Entonces direccion sería user[5]
+    direccion = None
+    if user:
+        try:
+            direccion = user[5]  # <-- CAMBIÁ ESTE ÍNDICE SI TU TUPLA ES DISTINTA
+        except:
+            direccion = None
+
+    return render_template("shop/pago.html", items=items, total=total, count=count, direccion=direccion)
 
 
 def shop_mis_compras():
@@ -83,9 +187,12 @@ def shop_mis_compras():
     return render_template("shop/mis_compras.html")
 
 
+# =========================
+# AUTH
+# =========================
+
 def auth_login_get():
     return render_template("auth/login.html")
-
 
 def auth_login_post():
     email = request.form.get("email")
@@ -101,23 +208,46 @@ def auth_login_post():
 
     return render_template("auth/login.html", error="Email o contraseña incorrectos")
 
-
 def auth_logout():
     session.clear()
     return redirect(url_for("index"))
 
+
+# =========================
+# ADMIN
+# =========================
 
 def admin_carga():
     if "user_id" not in session or session.get("user_tipo") != "admin":
         return redirect(url_for("admin_login"))
     return render_template("admin/carga_admin.html")
 
-
 def admin_estado_compra():
     if "user_id" not in session or session.get("user_tipo") != "admin":
         return redirect(url_for("admin_login"))
     return render_template("admin/estado_compra.html")
 
+def admin_login_get():
+    return render_template("admin/login_admin.html")
+
+def admin_login_post():
+    email = request.form.get("email")
+    password = request.form.get("pass")
+
+    user = UsuarioModel.login(POWERLAB_DB, email, password)
+
+    if user and user[7] == "admin":
+        session["user_id"] = user[0]
+        session["user_nombre"] = user[1]
+        session["user_tipo"] = user[7]
+        return redirect(url_for("admin_carga_route"))
+
+    return render_template("admin/login_admin.html", error="Solo admins pueden entrar")
+
+
+# =========================
+# API AUTH (AJAX)
+# =========================
 
 def auth_login_api():
     data = request.get_json(silent=True) or {}
@@ -167,20 +297,132 @@ def auth_registrarse_api():
     return jsonify({"ok": False, "msg": "No se pudo registrar (email duplicado o error DB)"}), 409
 
 
-def admin_login_get():
-    return render_template("admin/login_admin.html")
+# ============================================================
+# API CARRITO (AJAX) - JSON
+# ============================================================
+
+def cart_get_api():
+    chk = _require_login_json()
+    if chk:
+        return chk
+
+    cart = _get_cart()
+    items, total, count = _cart_totals(cart)
+    return jsonify({"ok": True, "items": items, "total": total, "count": count}), 200
 
 
-def admin_login_post():
-    email = request.form.get("email")
-    password = request.form.get("pass")
+def cart_add_api():
+    chk = _require_login_json()
+    if chk:
+        return chk
 
-    user = UsuarioModel.login(POWERLAB_DB, email, password)
+    data = request.get_json(silent=True) or {}
+    id_producto = int(data.get("id_producto") or 0)
+    sabor = (data.get("sabor") or "").strip()
 
-    if user and user[7] == "admin":
-        session["user_id"] = user[0]
-        session["user_nombre"] = user[1]
-        session["user_tipo"] = user[7]
-        return redirect(url_for("admin_carga_route"))
+    if id_producto <= 0 or not sabor:
+        return jsonify({"ok": False, "msg": "Faltan datos (id_producto/sabor)"}), 400
 
-    return render_template("admin/login_admin.html", error="Solo admins pueden entrar")
+    producto = ProductoModel.obtener_unico_por_id(POWERLAB_DB, id_producto)
+    if not producto:
+        return jsonify({"ok": False, "msg": "Producto inexistente"}), 404
+
+    sabores_rows = ProductoModel.listar_sabores_por_id(POWERLAB_DB, id_producto)
+    sabores = [row[0] for row in sabores_rows] if sabores_rows else []
+    if sabor.lower() not in [s.lower() for s in sabores]:
+        return jsonify({"ok": False, "msg": "Sabor inválido"}), 400
+
+    cart = _get_cart()
+    key = f"{id_producto}:{sabor.lower()}"
+
+    if key in cart:
+        cart[key]["cantidad"] = cart[key].get("cantidad", 1) + 1
+    else:
+        # producto: (id, nombre, marca, descripcion, precio, stock, imagen, categoria)
+        cart[key] = {
+            "key": key,
+            "producto_id": producto[0],
+            "sabor": sabor,
+            "nombre": producto[1],
+            "marca": producto[2],
+            "precio": producto[4],
+            "imagen": _img_url(producto[6]),
+            "cantidad": 1
+        }
+
+    _set_cart(cart)
+    items, total, count = _cart_totals(cart)
+    return jsonify({"ok": True, "items": items, "total": total, "count": count}), 200
+
+
+def cart_update_api():
+    chk = _require_login_json()
+    if chk:
+        return chk
+
+    data = request.get_json(silent=True) or {}
+    key = (data.get("key") or "").strip()
+    action = (data.get("action") or "").strip()  # "inc" | "dec" | "set"
+    qty = data.get("qty")
+
+    cart = _get_cart()
+    if not key or key not in cart:
+        return jsonify({"ok": False, "msg": "Item inexistente"}), 404
+
+    # normalizo cantidad por si viniera viejo
+    cart[key]["cantidad"] = cart[key].get("cantidad", cart[key].get("qty", 1))
+    cart[key].pop("qty", None)
+
+    if action == "set":
+        try:
+            qty_int = int(qty)
+        except:
+            return jsonify({"ok": False, "msg": "qty inválido"}), 400
+
+        if qty_int <= 0:
+            cart.pop(key, None)
+        else:
+            cart[key]["cantidad"] = qty_int
+
+    elif action == "inc":
+        cart[key]["cantidad"] += 1
+
+    elif action == "dec":
+        cart[key]["cantidad"] -= 1
+        if cart[key]["cantidad"] <= 0:
+            cart.pop(key, None)
+
+    else:
+        return jsonify({"ok": False, "msg": "action inválida"}), 400
+
+    _set_cart(cart)
+    items, total, count = _cart_totals(cart)
+    return jsonify({"ok": True, "items": items, "total": total, "count": count}), 200
+
+
+def cart_remove_api():
+    chk = _require_login_json()
+    if chk:
+        return chk
+
+    data = request.get_json(silent=True) or {}
+    key = (data.get("key") or "").strip()
+
+    cart = _get_cart()
+    if key and key in cart:
+        cart.pop(key, None)
+        _set_cart(cart)
+
+    items, total, count = _cart_totals(cart)
+    return jsonify({"ok": True, "items": items, "total": total, "count": count}), 200
+
+
+def cart_clear_api():
+    chk = _require_login_json()
+    if chk:
+        return chk
+
+    session.pop("cart", None)
+    session.modified = True
+
+    return jsonify({"ok": True, "items": [], "total": 0, "count": 0}), 200
