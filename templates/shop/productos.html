@@ -25,6 +25,7 @@
             <a href="{{ url_for('productos') }}">DESCUENTOS</a>
             <a href="{{ url_for('mis_compras') }}">MIS COMPRAS</a>
         </nav>
+
         {% if session.get("user_id") %}
             <span class="Inicio-sesion">
                 {% if session.get("user_tipo") == "admin" %}
@@ -32,13 +33,14 @@
                 {% else %}
                     Hola {{ session.get("user_nombre") }}
                 {% endif %}
-                   <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
+                <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline; margin-left: 10px;">Logout</a>
             </span>
-            {% else %}
-                <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
-                    Iniciar sesión/<br>Registrarse
-                </a>
-            {% endif %}
+        {% else %}
+            <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
+                Iniciar sesión/<br>Registrarse
+            </a>
+        {% endif %}
+
         <a href="{{ url_for('carrito') }}" class="Boton-carrito">
             <i class="fa-solid fa-cart-shopping"></i>
             <span class="Contador">0</span>
@@ -53,40 +55,47 @@
 
     <div class="Slate-1">
 
-        <div class="Filtro">
+        <!-- ✅ FORM GET que alimenta /productos?categoria=...&marca=...&sabor=... -->
+        <form class="Filtro" method="GET" action="{{ url_for('productos') }}">
             <label for="Categorias">Categorias</label>
-            <select id="Categorias" name="Categorias">
-                <option value="">Todos</option>
-                <option value="proteina">Proteína</option>
-                <option value="creatina">Creatina</option>
-                <option value="preentreno">Pre-entreno</option>
-                <option value="energia">Energía</option>
-                <option value="preparacion_peso">Preparación y Ganador de Peso</option>
-                <option value="recetas">Recetas</option>
+            <select id="Categorias" name="categoria" onchange="this.form.submit()">
+                <option value="" {% if not categoria %}selected{% endif %}>Todos</option>
+                <option value="proteina" {% if categoria == "proteina" %}selected{% endif %}>Proteína</option>
+                <option value="creatina" {% if categoria == "creatina" %}selected{% endif %}>Creatina</option>
+                <option value="preentreno" {% if categoria == "preentreno" %}selected{% endif %}>Pre-entreno</option>
+                <option value="energia" {% if categoria == "energia" %}selected{% endif %}>Energía</option>
+                <option value="preparacion_peso" {% if categoria == "preparacion_peso" %}selected{% endif %}>Preparación y Ganador de Peso</option>
+                <option value="recetas" {% if categoria == "recetas" %}selected{% endif %}>Recetas</option>
             </select>
 
             <label for="Marcas">Marcas</label>
-            <select id="Marcas" name="Marcas">
-                <option value="Todas">Todas</option>
-                <option value="Ena">Ena</option>
-                <option value="Star">Star Nutrition</option>
-                <option value="Granger">Granger</option>
+            <select id="Marcas" name="marca" onchange="this.form.submit()">
+                <option value="" {% if not marca %}selected{% endif %}>Todas</option>
+                <!-- 👇 value en minúscula para matchear controller/model -->
+                <option value="ena" {% if marca == "ena" %}selected{% endif %}>Ena</option>
+                <option value="star" {% if marca == "star" %}selected{% endif %}>Star Nutrition</option>
+                <option value="granger" {% if marca == "granger" %}selected{% endif %}>Granger</option>
             </select>
 
             <label for="Sabores">Sabores</label>
-            <select name="Sabores" id="Sabores">
-                <option value="">Todas</option>
-                <option value="chocolate">Chocolate</option>
-                <option value="vainilla">Vainilla</option>
-                <option value="cookiescream">Cookies & Cream</option>
-                <option value="strawberry">Strawberry</option>
-                <option value="neutro">Neutro</option>
-                <option value="fruitpunch">Fruit Punch</option>
-                <option value="citrus">Citrus</option>
-                <option value="uva">Uva</option>
-                <option value="lemonade">Lemonade</option>
+            <select name="sabor" id="Sabores" onchange="this.form.submit()">
+                <option value="" {% if not sabor %}selected{% endif %}>Todas</option>
+                <option value="chocolate" {% if sabor == "chocolate" %}selected{% endif %}>Chocolate</option>
+                <option value="vainilla" {% if sabor == "vainilla" %}selected{% endif %}>Vainilla</option>
+                <option value="cookiescream" {% if sabor == "cookiescream" %}selected{% endif %}>Cookies & Cream</option>
+                <option value="strawberry" {% if sabor == "strawberry" %}selected{% endif %}>Strawberry</option>
+                <option value="neutro" {% if sabor == "neutro" %}selected{% endif %}>Neutro</option>
+                <option value="fruitpunch" {% if sabor == "fruitpunch" %}selected{% endif %}>Fruit Punch</option>
+                <option value="citrus" {% if sabor == "citrus" %}selected{% endif %}>Citrus</option>
+                <option value="uva" {% if sabor == "uva" %}selected{% endif %}>Uva</option>
+                <option value="lemonade" {% if sabor == "lemonade" %}selected{% endif %}>Lemonade</option>
             </select>
-        </div>
+
+            <!-- Botón opcional (por si querés filtrar sin onchange). Si no lo querés, borrarlo. -->
+            <noscript>
+                <button type="submit">Filtrar</button>
+            </noscript>
+        </form>
 
         <div class="Catalogo">
             {% if productos and productos|length > 0 %}

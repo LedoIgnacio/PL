@@ -107,3 +107,10 @@ usuario.apellido,
 pedido.fecha_hora
 FROM pedido
 INNER JOIN usuario ON pedido.id_usuario = usuario.id;
+
+
+UPDATE producto
+SET
+  categoria = LOWER(TRIM(categoria)),
+  sabor     = LOWER(TRIM(sabor)),
+  marca     = LOWER(TRIM(marca));

@@ -55,22 +55,26 @@ def route(app):
     @app.route("/mis-compras", methods=["GET"])
     def mis_compras():
         return shop_mis_compras()
-    
+
     @app.route("/api/login", methods=["POST"])
     def login_api():
         return auth_login_api()
-    
+
     @app.route("/api/registrarse", methods=["POST"])
     def registrarse_api():
         return auth_registrarse_api()
-    
+
     @app.route("/logout", endpoint="logout")
     def logout_route():
         return auth_logout()
-    
+
     @app.route("/admin/login", methods=["GET"])
     def admin_login():
         return admin_login_get()
+
+    @app.route("/admin/login", methods=["POST"])
+    def admin_login_post_route():
+        return admin_login_post()
 
     @app.route("/admin/carga", methods=["GET"])
     def admin_carga_route():
@@ -79,11 +83,7 @@ def route(app):
     @app.route("/admin/estado-compra", methods=["GET"])
     def admin_estado_compra_route():
         return admin_estado_compra()
-    
-    @app.route("/admin/login", methods=["POST"])
-    def admin_login_post_route():
-        return admin_login_post()
-    
-    @app.route("/item/<int:id_producto>", methods=["GET"])
-    def item(id_producto):
+
+    @app.route("/item/<int:id_producto>", methods=["GET"], endpoint="item")
+    def item_route(id_producto):
         return shop_item(id_producto)

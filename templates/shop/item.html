@@ -7,7 +7,6 @@
     <title>Power.Lab</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main/index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/item.css') }}">
-    <!-- Cargar íconos de Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
@@ -19,12 +18,14 @@
                 <i class="fas fa-dumbbell" style="color: #d2cfcf; font-size: 48px;"></i>
             </a>
         </div>
+
         <nav class="Menu-links">
             <a href="{{ url_for('perfil') }}">PERFIL</a>
             <a href="{{ url_for('productos') }}">PRODUCTOS</a>
             <a href="{{ url_for('productos') }}">DESCUENTOS</a>
             <a href="{{ url_for('mis_compras') }}">MIS COMPRAS</a>
         </nav>
+
         {% if session.get("user_id") %}
             <span class="Inicio-sesion">
                 {% if session.get("user_tipo") == "admin" %}
@@ -32,13 +33,14 @@
                 {% else %}
                     Hola {{ session.get("user_nombre") }}
                 {% endif %}
-                   <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
+                <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline; margin-left: 8px;">Logout</a>
             </span>
-            {% else %}
-                <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
-                    Iniciar sesión/<br>Registrarse
-                </a>
-            {% endif %}
+        {% else %}
+            <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
+                Iniciar sesión/<br>Registrarse
+            </a>
+        {% endif %}
+
         <a href="{{ url_for('carrito') }}" class="Boton-carrito">
             <i class="fa-solid fa-cart-shopping"></i>
             <span class="Contador">0</span>
@@ -56,18 +58,28 @@
         </div>
 
         <div class="Detalles">
+            <h2>{{ p[1] }}</h2>
+
             <p class="Txt-Detalles">
-                <h2>{{ p[1] }}</h2>
-                Precio: ${{ p[4] }} / Envio: $3000
+                Precio: ${{ p[4] }} / Envío: $3000
             </p>
+
             <label for="Sabores">Sabores:</label>
-            <select id="Sabores" name="Sabores">
-                <option value="Seleccionar">Seleccionar</option>
-                <option value="Chocolate">Chocolate</option>
-                <option value="Vainilla">Vainilla</option>
-                <option value="CookiesCream">CookiesCream</option>
-                <option value="Strawberry">Strawberry</option>
+
+            <select id="Sabores" name="sabor">
+                <option value="">Seleccionar</option>
+
+                {% if sabores and sabores|length > 0 %}
+                    {% for s in sabores %}
+                        {# s viene desde DB; lo normalizamos para el value #}
+                        {% set value = (s or "")|lower|replace(" ", "")|replace("&", "") %}
+                        <option value="{{ value }}">{{ s }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">Sin sabores</option>
+                {% endif %}
             </select>
+
             <p id="error-sabor" style="color: red; font-size: 14px;"></p>
 
             <p class="Txt-Detalles">
@@ -75,7 +87,7 @@
                 {{ p[3] }}
             </p>
 
-            <button type="submit">Agregar al Carrito</button>
+            <button type="button">Agregar al Carrito</button>
         </div>
     </div>
 
@@ -91,8 +103,8 @@
         </div>
         <div class="ANMAT">
             <p>
-                Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br> cumpliendo
-                requisitos de seguridad, calidad y registro.
+                Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br>
+                cumpliendo requisitos de seguridad, calidad y registro.
             </p>
         </div>
         <div class="Metodos-pago">
@@ -102,4 +114,5 @@
         </div>
     </footer>
 </body>
+
 </html>
