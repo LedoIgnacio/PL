@@ -2,28 +2,14 @@ from flask import render_template, request, redirect, url_for, session, jsonify
 from app.config_db import POWERLAB_DB
 from app.models.usuario_model import UsuarioModel
 from app.models.producto_model import ProductoModel
+from app.models.pedido_model import PedidoModel
+
 
 # ============================================================
-# CARRITO (SESSION) - estilo simple, sin DB todavía
+# CARRITO (SESSION)
 # ============================================================
 
 def _get_cart():
-    """
-    Estructura en session:
-    session["cart"] = {
-        "<id_producto>:<sabor_lower>": {
-            "key": str,
-            "producto_id": int,
-            "sabor": str,
-            "nombre": str,
-            "marca": str,
-            "precio": float|int,
-            "imagen": str,
-            "cantidad": int
-        },
-        ...
-    }
-    """
     return session.get("cart", {})
 
 def _set_cart(cart):
@@ -42,13 +28,11 @@ def _cart_totals(cart):
     count = 0
 
     for it in items:
-        # compat: si quedó algo viejo con qty, lo toma igual
         cant = it.get("cantidad", it.get("qty", 1))
 
         # normalizo para adelante
         it["cantidad"] = cant
-        if "qty" in it:
-            it.pop("qty", None)
+        it.pop("qty", None)
 
         precio = it.get("precio", 0)
         total += (precio * cant)
@@ -57,12 +41,6 @@ def _cart_totals(cart):
     return items, total, count
 
 def _img_url(img_value):
-    """
-    Normaliza imagen para que el HTML pueda usarla directo.
-    Si en DB guardás:
-      - URL completa => la usa
-      - nombre de archivo => arma /static/img/productos/<archivo>
-    """
     img = (img_value or "").strip()
     if img.startswith("http"):
         return img
@@ -95,7 +73,6 @@ def profile_perfil():
 # =========================
 
 def shop_productos():
-    # /productos?categoria=proteina&marca=ena&sabor=chocolate
     categoria = (request.args.get("categoria") or "").strip().lower()
     marca = (request.args.get("marca") or "").strip().lower()
     sabor = (request.args.get("sabor") or "").strip().lower()
@@ -143,7 +120,7 @@ def shop_item(id_producto):
 
 
 # =========================
-# CARRITO (PÁGINA)
+# CARRITO (PÁGINAS)
 # =========================
 
 def shop_carrito():
@@ -163,18 +140,14 @@ def shop_pago():
     cart = _get_cart()
     items, total, count = _cart_totals(cart)
 
-    # dirección desde DB
     user_id = session.get("user_id")
     user = UsuarioModel.obtener_por_id(POWERLAB_DB, user_id)  # AJUSTÁ si tu método se llama distinto
 
-    # ===== AJUSTAR ÍNDICE DE DIRECCIÓN =====
-    # Depende del SELECT de tu UsuarioModel.obtener_por_id()
-    # Ejemplo típico: (id, nombre, apellido, email, telefono, direccion, pass, tipo_usuario)
-    # Entonces direccion sería user[5]
+    # según tu INSERT: usuario(id,nombre,apellido,email,telefono,direccion,pass,tipo_usuario)
     direccion = None
     if user:
         try:
-            direccion = user[5]  # <-- CAMBIÁ ESTE ÍNDICE SI TU TUPLA ES DISTINTA
+            direccion = user[5]
         except:
             direccion = None
 
@@ -184,7 +157,48 @@ def shop_pago():
 def shop_mis_compras():
     if "user_id" not in session:
         return redirect(url_for("login_get"))
-    return render_template("shop/mis_compras.html")
+
+    user_id = session.get("user_id")
+
+    pedidos_rows = PedidoModel.listar_pedidos_por_usuario(POWERLAB_DB, user_id) or []
+
+    pedidos = []
+    pedido_ids = []
+
+    for row in pedidos_rows:
+        # (id, id_usuario, fecha_hora, estado, total)
+        p = {
+            "id": row[0],
+            "usuario_id": row[1],
+            "fecha": row[2],
+            "estado": row[3],
+            "total": row[4],
+            "items": []
+        }
+        pedidos.append(p)
+        pedido_ids.append(row[0])
+
+    items_rows = PedidoModel.listar_items_por_pedido_ids(POWERLAB_DB, pedido_ids) or []
+    pedidos_by_id = {p["id"]: p for p in pedidos}
+
+    for it in items_rows:
+        # (id_pedido, id_producto, cantidad, precio_uni, nombre, descripcion, imagen, sabor)
+        pedido_id = it[0]
+        if pedido_id in pedidos_by_id:
+            pedidos_by_id[pedido_id]["items"].append({
+                "producto_id": it[1],
+                "cantidad": it[2],
+                "precio": it[3],
+                "nombre": it[4],
+                "descripcion": it[5],
+                "imagen": _img_url(it[6]),
+                "sabor": it[7]  # None
+            })
+
+    cart = _get_cart()
+    _, _, count = _cart_totals(cart)
+
+    return render_template("shop/mis_compras.html", pedidos=pedidos, count=count)
 
 
 # =========================
@@ -225,8 +239,51 @@ def admin_carga():
 def admin_estado_compra():
     if "user_id" not in session or session.get("user_tipo") != "admin":
         return redirect(url_for("admin_login"))
-    return render_template("admin/estado_compra.html")
 
+    pedidos_rows = PedidoModel.listar_pedidos_admin(POWERLAB_DB, limit=200) or []
+
+    pedidos = []
+    pedido_ids = []
+
+    for r in pedidos_rows:
+        # (id, id_usuario, fecha_hora, estado, total, nombre, apellido, email, direccion)
+        p = {
+            "id": r[0],
+            "usuario_id": r[1],
+            "fecha": r[2],
+            "estado": r[3],
+            "total": r[4],
+            "usuario_nombre": r[5],
+            "usuario_apellido": r[6],
+            "usuario_email": r[7],
+            "usuario_direccion": r[8],
+            "items": []
+        }
+        pedidos.append(p)
+        pedido_ids.append(r[0])
+
+    items_rows = PedidoModel.listar_items_por_pedido_ids(POWERLAB_DB, pedido_ids) or []
+    pedidos_by_id = {p["id"]: p for p in pedidos}
+
+    for it in items_rows:
+        # (id_pedido, id_producto, cantidad, precio_uni, nombre, descripcion, imagen, sabor)
+        pid = it[0]
+        if pid in pedidos_by_id:
+            pedidos_by_id[pid]["items"].append({
+                "producto_id": it[1],
+                "cantidad": it[2],
+                "precio": it[3],
+                "nombre": it[4],
+                "descripcion": it[5],
+                "imagen": _img_url(it[6]),
+                "sabor": it[7],
+            })
+
+    # contador carrito en header (si querés mostrarlo también en admin)
+    cart = _get_cart()
+    _, _, count = _cart_totals(cart)
+
+    return render_template("admin/estado_compra.html", pedidos=pedidos, count=count)
 def admin_login_get():
     return render_template("admin/login_admin.html")
 
@@ -298,7 +355,7 @@ def auth_registrarse_api():
 
 
 # ============================================================
-# API CARRITO (AJAX) - JSON
+# API CARRITO (AJAX)
 # ============================================================
 
 def cart_get_api():
@@ -338,7 +395,6 @@ def cart_add_api():
     if key in cart:
         cart[key]["cantidad"] = cart[key].get("cantidad", 1) + 1
     else:
-        # producto: (id, nombre, marca, descripcion, precio, stock, imagen, categoria)
         cart[key] = {
             "key": key,
             "producto_id": producto[0],
@@ -369,7 +425,6 @@ def cart_update_api():
     if not key or key not in cart:
         return jsonify({"ok": False, "msg": "Item inexistente"}), 404
 
-    # normalizo cantidad por si viniera viejo
     cart[key]["cantidad"] = cart[key].get("cantidad", cart[key].get("qty", 1))
     cart[key].pop("qty", None)
 
@@ -424,5 +479,117 @@ def cart_clear_api():
 
     session.pop("cart", None)
     session.modified = True
-
     return jsonify({"ok": True, "items": [], "total": 0, "count": 0}), 200
+
+
+# ============================================================
+# FINALIZAR COMPRA (CREA PEDIDO + DETALLES)
+# ============================================================
+
+def pedido_finalizar_post():
+    if "user_id" not in session:
+        return redirect(url_for("login_get"))
+
+    cart = _get_cart()
+    items, total, count = _cart_totals(cart)
+
+    if not items or count == 0:
+        return redirect(url_for("carrito"))
+
+    user_id = session.get("user_id")
+
+    # crea pedido
+    # usamos estado acorde a tu DB
+    PedidoModel.crear_pedido(POWERLAB_DB, user_id, "no_pagado", total)
+
+    pedido_id = PedidoModel.obtener_ultimo_pedido_id_usuario(POWERLAB_DB, user_id)
+    if not pedido_id:
+        # si falló, no vaciamos carrito
+        return redirect(url_for("carrito"))
+
+    # crea detalles
+    for it in items:
+        PedidoModel.crear_detalle(
+            POWERLAB_DB,
+            pedido_id,
+            it.get("producto_id"),
+            it.get("cantidad", 1),
+            it.get("precio", 0)
+        )
+
+    # vacía carrito
+    session.pop("cart", None)
+    session.modified = True
+
+    return redirect(url_for("mis_compras"))
+
+
+# ============================================================
+# API ADMIN - ACTUALIZA ESTADO PEDIDO
+# ============================================================
+
+def admin_update_estado_pedido_api():
+    if "user_id" not in session or session.get("user_tipo") != "admin":
+        return jsonify({"ok": False, "msg": "No autorizado"}), 403
+
+    data = request.get_json(silent=True) or {}
+    pedido_id = int(data.get("pedido_id") or 0)
+    estado = (data.get("estado") or "").strip()
+
+    if pedido_id <= 0 or not estado:
+        return jsonify({"ok": False, "msg": "Faltan datos"}), 400
+
+    estados_ok = {"no_pagado", "en_proceso", "entregado", "carrito"}
+    if estado not in estados_ok:
+        return jsonify({"ok": False, "msg": "Estado inválido"}), 400
+
+    res = PedidoModel.actualizar_estado(POWERLAB_DB, pedido_id, estado)
+    if res and res > 0:
+        return jsonify({"ok": True}), 200
+
+    return jsonify({"ok": False, "msg": "No se actualizó (id inexistente?)"}), 404
+
+def admin_crear_producto_post():
+    if "user_id" not in session or session.get("user_tipo") != "admin":
+        return redirect(url_for("admin_login"))
+
+    # tu form actual trae estos nombres:
+    # NombreMarca, Precio, Descripcion, Descuentos, Imagen
+    nombre_marca = (request.form.get("NombreMarca") or "").strip()
+    descripcion = (request.form.get("Descripcion") or "").strip()
+    imagen = (request.form.get("Imagen") or "").strip()
+
+    # descuentos no existe en tu tabla producto -> lo ignoramos
+    # marca y nombre: si lo mandás junto, lo separamos simple:
+    # "Whey Protein - Ena" => nombre="Whey Protein", marca="Ena"
+    nombre = nombre_marca
+    marca = ""
+    if "-" in nombre_marca:
+        parts = [p.strip() for p in nombre_marca.split("-", 1)]
+        nombre = parts[0]
+        marca = parts[1]
+
+    try:
+        precio = int(request.form.get("Precio") or 0)
+    except:
+        precio = 0
+
+    # como tu tabla producto pide: categoria y sabor (NOT NULL en tu insert masivo)
+    # si no los cargás en admin, ponemos defaults simples
+    categoria = "general"
+    sabor = "neutro"
+    stock = 50
+
+    if not nombre or not descripcion or not imagen or precio <= 0:
+        return render_template("admin/carga_admin.html", error="Faltan datos o precio inválido")
+
+    # insert directo usando ProductoModel (si ya tenés crear_producto ahí, úsalo)
+    # si NO tenés, te paso SQL acá:
+    from app._mysql_db import insertDB
+    sql = """
+        INSERT INTO producto (id, nombre, marca, descripcion, precio, stock, imagen, categoria, sabor)
+        VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s)
+    """
+    insertDB(POWERLAB_DB, sql, (nombre, marca, descripcion, precio, stock, imagen, categoria, sabor))
+
+    return redirect(url_for("admin_carga_route"))

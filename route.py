@@ -23,7 +23,15 @@ from controller import (
     cart_update_api,
     cart_remove_api,
     cart_clear_api,
+
+    # finalizar compra
+    pedido_finalizar_post,
+
+    # admin estado pedido
+    admin_update_estado_pedido_api,
 )
+
+from controller import admin_crear_producto_post
 
 def route(app):
 
@@ -96,9 +104,15 @@ def route(app):
         return shop_item(id_producto)
 
     # =========================
+    # FINALIZAR COMPRA
+    # =========================
+    @app.route("/pedido/finalizar", methods=["POST"])
+    def pedido_finalizar_route():
+        return pedido_finalizar_post()
+
+    # =========================
     # API CARRITO (AJAX)
     # =========================
-
     @app.route("/api/cart/get", methods=["GET"])
     def api_cart_get():
         return cart_get_api()
@@ -118,3 +132,14 @@ def route(app):
     @app.route("/api/cart/clear", methods=["POST"])
     def api_cart_clear():
         return cart_clear_api()
+
+    # =========================
+    # API ADMIN - ESTADO PEDIDO
+    # =========================
+    @app.route("/api/admin/pedido/estado", methods=["POST"])
+    def api_admin_estado_pedido():
+        return admin_update_estado_pedido_api()
+    
+    @app.route("/admin/producto/crear", methods=["POST"])
+    def admin_producto_crear_route():
+        return admin_crear_producto_post()

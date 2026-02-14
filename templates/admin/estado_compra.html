@@ -1,233 +1,146 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power.Lab</title>
-    <link rel="stylesheet" href="../../static/css/main/index.css">
-    <link rel="stylesheet" href="../../static/css/admin/estado_compra_admin.css">
-    <!-- Cargar íconos de Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power.Lab</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main/index.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/estado_compra_admin.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
-    <header class="Encabezado">
-        <div class="Titulo-container">
-            <a href="../public/index.html" class="Boton-Inicio">
-                <h1 class="Titulo-header">Power.Lab</h1>
-                <i class="fas fa-dumbbell" style="color: #d2cfcf; font-size: 48px;"></i>
-            </a>
-        </div>
-        <nav class="Menu-links">
-            <a href="../profile/perfil.html">PERFIL</a>
-            <a href="../shop/productos.html">PRODUCTOS</a>
-            <a href="../shop/productos.html">DESCUENTOS</a>
-            <a href="../shop/mis_compras.html">MIS COMPRAS</a>
-        </nav>
-        {% if session.get("user_id") %}
-            <span class="Inicio-sesion">
-                {% if session.get("user_tipo") == "admin" %}
-                    ADMIN: Hola {{ session.get("user_nombre") }}
-                {% else %}
-                    Hola {{ session.get("user_nombre") }}
-                {% endif %}
-                   <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
-            </span>
-            {% else %}
-                <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
-                    Iniciar sesión/<br>Registrarse
-                </a>
-            {% endif %}
-        <a href="../shop/carrito.html" class="Boton-carrito">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span class="Contador">0</span>
-        </a>
-    </header>
+<header class="Encabezado">
+  <div class="Titulo-container">
+    <a href="{{ url_for('index') }}" class="Boton-Inicio">
+      <h1 class="Titulo-header">Power.Lab</h1>
+      <i class="fas fa-dumbbell" style="color:#d2cfcf; font-size:48px;"></i>
+    </a>
+  </div>
 
-    <div class="container">
-        <div class="tabla-wrapper">
-            <h2>Listado de Compras</h2>
+  <nav class="Menu-links">
+    <a href="{{ url_for('perfil') }}">PERFIL</a>
+    <a href="{{ url_for('productos') }}">PRODUCTOS</a>
+    <a href="{{ url_for('productos') }}">DESCUENTOS</a>
+    <a href="{{ url_for('mis_compras') }}">MIS COMPRAS</a>
+  </nav>
 
-            <div class="Filtro-tabla">
-                <label for="buscar">Buscar por nombre o número de orden:</label>
-                <input type="text" id="buscar" placeholder="Ej: Juan o #0001">
-            </div>
+  {% if session.get("user_id") %}
+    <span class="Inicio-sesion">
+      ADMIN: Hola {{ session.get("user_nombre") }}
+      <a href="{{ url_for('logout') }}" style="color:inherit; text-decoration:underline;">Logout</a>
+    </span>
+  {% else %}
+    <a href="{{ url_for('login_get') }}" class="Inicio-sesion">Iniciar sesión/<br>Registrarse</a>
+  {% endif %}
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Número de Orden</th>
-                        <th>Total de la Compra</th>
-                        <th>Nombre del Comprador</th>
-                        <th>Forma de Pago</th>
-                        <th>Ubicación</th>
-                        <th>Pago</th>
-                        <th>Preparación</th>
-                        <th>Envío</th>
-                        <th>Entrega</th>
-                        <th>Compras</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>#0001</td>
-                        <td>$38.900</td>
-                        <td>Juan Perez</td>
-                        <td>Visa</td>
-                        <td>La Carra 1234</td>
-                        <td class="Confirmacion-de-pago">
-                            <select class="Filtro-de-pago">
-                                <option value="no-pagado">No pagado</option>
-                                <option value="pagado">Pagado</option>
-                            </select>
-                        </td>
-                        <td class="Estado-preparacion">
-                            <select class="Filtro-preparacion">
-                                <option value="no-preparado">No preparado</option>
-                                <option value="en-preparacion">En preparación</option>
-                            </select>
-                        </td>
-                        <td class="Estado-envio">
-                            <select class="Filtro-envio">
-                                <option value="no-enviado">No enviado</option>
-                                <option value="enviado">Enviado</option>
-                            </select>
-                        </td>
-                        <td class="Estado-entrega">
-                            <select class="Filtro-entrega">
-                                <option value="no-entregado">No entregado</option>
-                                <option value="entregado">Entregado</option>
-                            </select>
-                        </td>
-                        <td><a href="../shop/mis_compras.html" class="Ver-compras">Ver</a></td>
-                    </tr>
-                    <!-- duplicar <tr> para más registros -->
-                    <tr>
-                        <td>#0002</td>
-                        <td>$38.900</td>
-                        <td>Ignacio Ledo</td>
-                        <td>Visa</td>
-                        <td>Mexico 1462</td>
-                        <td class="Confirmacion-de-pago">
-                            <select class="Filtro-de-pago">
-                                <option value="no-pagado">No pagado</option>
-                                <option value="pagado">Pagado</option>
-                            </select>
-                        </td>
-                        <td class="Estado-preparacion">
-                            <select class="Filtro-preparacion">
-                                <option value="no-preparado">No preparado</option>
-                                <option value="en-preparacion">En preparación</option>
-                            </select>
-                        </td>
-                        <td class="Estado-envio">
-                            <select class="Filtro-envio">
-                                <option value="no-enviado">No enviado</option>
-                                <option value="enviado">Enviado</option>
-                            </select>
-                        </td>
-                        <td class="Estado-entrega">
-                            <select class="Filtro-entrega">
-                                <option value="no-entregado">No entregado</option>
-                                <option value="entregado">Entregado</option>
-                            </select>
-                        </td>
-                        <td><a href="../shop/mis_compras.html" class="Ver-compras">Ver</a></td>
-                    </tr>
+  <a href="{{ url_for('carrito') }}" class="Boton-carrito">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <span class="Contador">{{ count if count else 0 }}</span>
+  </a>
+</header>
 
-                    <tr>
-                        <td>#0003</td>
-                        <td>$38.900</td>
-                        <td>Alejo Pisani</td>
-                        <td>Visa</td>
-                        <td>Sargento Cabral 1234</td>
-                        <td class="Confirmacion-de-pago">
-                            <select class="Filtro-de-pago">
-                                <option value="no-pagado">No pagado</option>
-                                <option value="pagado">Pagado</option>
-                            </select>
-                        </td>
-                        <td class="Estado-preparacion">
-                            <select class="Filtro-preparacion">
-                                <option value="no-preparado">No preparado</option>
-                                <option value="en-preparacion">En preparación</option>
-                            </select>
-                        </td>
-                        <td class="Estado-envio">
-                            <select class="Filtro-envio">
-                                <option value="no-enviado">No enviado</option>
-                                <option value="enviado">Enviado</option>
-                            </select>
-                        </td>
-                        <td class="Estado-entrega">
-                            <select class="Filtro-entrega">
-                                <option value="no-entregado">No entregado</option>
-                                <option value="entregado">Entregado</option>
-                            </select>
-                        </td>
-                        <td><a href="../shop/mis_compras.html" class="Ver-compras">Ver</a></td>
-                    </tr>
+<div class="container">
+  <div class="tabla-wrapper">
+    <h2>Listado de Pedidos</h2>
 
-                    <tr>
-                        <td>#0004</td>
-                        <td>$38.900</td>
-                        <td>Ivan Finamore</td>
-                        <td>Visa</td>
-                        <td>Cabildo 1234</td>
-                        <td class="Confirmacion-de-pago">
-                            <select class="Filtro-de-pago">
-                                <option value="no-pagado">No pagado</option>
-                                <option value="pagado">Pagado</option>
-                            </select>
-                        </td>
-                        <td class="Estado-preparacion">
-                            <select class="Filtro-preparacion">
-                                <option value="no-preparado">No preparado</option>
-                                <option value="en-preparacion">En preparación</option>
-                            </select>
-                        </td>
-                        <td class="Estado-envio">
-                            <select class="Filtro-envio">
-                                <option value="no-enviado">No enviado</option>
-                                <option value="enviado">Enviado</option>
-                            </select>
-                        </td>
-                        <td class="Estado-entrega">
-                            <select class="Filtro-entrega">
-                                <option value="no-entregado">No entregado</option>
-                                <option value="entregado">Entregado</option>
-                            </select>
-                        <td><a href="../shop/mis_compras.html" class="Ver-compras">Ver</a></td>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="Filtro-tabla">
+      <label for="buscar">Buscar por nombre o número de orden:</label>
+      <input type="text" id="buscar" placeholder="Ej: Ignacio o #3">
     </div>
 
-    <footer class="Pie-pagina">
-        <div class="Slogan">
-            <p>
-                <span class="Resaltado-slogan">Power.Lab</span><br>
-                Suplementación<br><br>
-                Somos personas normales como tú,<br>
-                que nos gusta el deporte y el gimnasio<br>
-                y queremos ayudarte a mejorar.
-            </p>
-        </div>
-        <div class="ANMAT">
-            <p>
-                Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br> cumpliendo
-                requisitos de seguridad, calidad y registro.
-            </p>
-        </div>
-        <div class="Metodos-pago">
-            <i class="fab fa-cc-visa"></i>
-            <i class="fab fa-cc-mastercard"></i>
-            <img src="../../static/img/logos/mercadopago.png" alt="Mercado Pago">
-        </div>
-    </footer>
-</body>
+    <table>
+      <thead>
+        <tr>
+          <th>Número de Orden</th>
+          <th>Total</th>
+          <th>Comprador</th>
+          <th>Email</th>
+          <th>Dirección</th>
+          <th>Estado</th>
+          <th>Compras</th>
+        </tr>
+      </thead>
 
+      <tbody id="tbody-pedidos">
+        {% if pedidos and pedidos|length > 0 %}
+          {% for p in pedidos %}
+            <tr class="row-pedido"
+                data-id="{{ p['id'] }}"
+                data-nombre="{{ (p['usuario_nombre'] ~ ' ' ~ p['usuario_apellido'])|lower }}">
+
+              <td>#{{ p["id"] }}</td>
+              <td>${{ p["total"] }}</td>
+              <td>{{ p["usuario_nombre"] }} {{ p["usuario_apellido"] }}</td>
+              <td>{{ p["usuario_email"] }}</td>
+              <td>{{ p["usuario_direccion"] }}</td>
+
+              <td>
+                <select class="select-estado" data-pedido="{{ p['id'] }}">
+                  {% for s in ["no_pagado","en_proceso","entregado","carrito"] %}
+                    <option value="{{ s }}" {% if s==p["estado"] %}selected{% endif %}>{{ s }}</option>
+                  {% endfor %}
+                </select>
+                <span class="msg" id="msg-{{ p['id'] }}"></span>
+              </td>
+
+              <td>
+                <button class="Ver-compras" type="button" data-toggle="{{ p['id'] }}">Ver</button>
+              </td>
+            </tr>
+
+            <tr id="det-{{ p['id'] }}" class="row-detalle" style="display:none;">
+              <td colspan="7">
+                {% if p["items"] and p["items"]|length > 0 %}
+                  <div style="padding:10px; color:#d2cfcf;">
+                    {% for it in p["items"] %}
+                      <div style="display:flex; gap:12px; align-items:center; margin:10px 0;">
+                        <img src="{{ it['imagen'] }}" alt="{{ it['nombre'] }}"
+                             style="width:60px; height:60px; object-fit:cover; border-radius:8px;">
+                        <div>
+                          <div><strong>{{ it["nombre"] }}</strong></div>
+                          <div>
+                            {% if it["sabor"] %}Sabor: {{ it["sabor"] }} | {% endif %}
+                            Cant: {{ it["cantidad"] }} | ${{ it["precio"] }}
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <p style="padding:10px; color:#d2cfcf;">Sin items.</p>
+                {% endif %}
+              </td>
+            </tr>
+
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="7">No hay pedidos.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer class="Pie-pagina">
+  <div class="Slogan">
+    <p><span class="Resaltado-slogan">Power.Lab</span><br>Suplementación<br><br>
+      Somos personas normales como tú,<br>que nos gusta el deporte y el gimnasio<br>y queremos ayudarte a mejorar.
+    </p>
+  </div>
+  <div class="ANMAT">
+    <p>Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br>
+      cumpliendo requisitos de seguridad, calidad y registro.</p>
+  </div>
+  <div class="Metodos-pago">
+    <i class="fab fa-cc-visa"></i>
+    <i class="fab fa-cc-mastercard"></i>
+    <img src="{{ url_for('static', filename='img/logos/mercadopago.png') }}" alt="Mercado Pago">
+  </div>
+</footer>
+
+<!-- JS externo -->
+<script defer src="{{ url_for('static', filename='js/estado_compra_admin.js') }}"></script>
+</body>
 </html>

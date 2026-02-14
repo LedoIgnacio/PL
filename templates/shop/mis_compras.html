@@ -5,26 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Power.Lab</title>
-    <link rel="stylesheet" href="../../static/css/main/index.css">
-    <link rel="stylesheet" href="../../static/css/pages/mis_compras.css">
-    <!-- Cargar íconos de Font Awesome -->
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/mis_compras.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
     <header class="Encabezado">
         <div class="Titulo-container">
-            <a href="../public/index.html" class="Boton-Inicio">
+            <a href="{{ url_for('index') }}" class="Boton-Inicio">
                 <h1 class="Titulo-header">Power.Lab</h1>
                 <i class="fas fa-dumbbell" style="color: #d2cfcf; font-size: 48px;"></i>
             </a>
         </div>
+
         <nav class="Menu-links">
-            <a href="../profile/perfil.html">PERFIL</a>
-            <a href="../shop/productos.html">PRODUCTOS</a>
-            <a href="../shop/productos.html">DESCUENTOS</a>
-            <a href="../shop/mis_compras.html">MIS COMPRAS</a>
+            <a href="{{ url_for('perfil') }}">PERFIL</a>
+            <a href="{{ url_for('productos') }}">PRODUCTOS</a>
+            <a href="{{ url_for('productos') }}">DESCUENTOS</a>
+            <a href="{{ url_for('mis_compras') }}">MIS COMPRAS</a>
         </nav>
+
         {% if session.get("user_id") %}
             <span class="Inicio-sesion">
                 {% if session.get("user_tipo") == "admin" %}
@@ -32,70 +34,74 @@
                 {% else %}
                     Hola {{ session.get("user_nombre") }}
                 {% endif %}
-                   <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
+                <a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: underline;">Logout</a>
             </span>
-            {% else %}
-                <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
-                    Iniciar sesión/<br>Registrarse
-                </a>
-            {% endif %}
-        <a href="../shop/carrito.html" class="Boton-carrito">
+        {% else %}
+            <a href="{{ url_for('login_get') }}" class="Inicio-sesion">
+                Iniciar sesión/<br>Registrarse
+            </a>
+        {% endif %}
+
+        <a href="{{ url_for('carrito') }}" class="Boton-carrito">
             <i class="fa-solid fa-cart-shopping"></i>
-            <span class="Contador">0</span>
+            <span class="Contador">{{ count if count else 0 }}</span>
         </a>
     </header>
 
     <div class="Slate">
-        <div class="Compra-box">
-            <div class="Compra-info">
-                <div class="Compra-item">
-                    <img src="../../static/img/productos/EnaCreatina.jpg" alt="Creatina ENA">
-                    <div class="Compra-detalles">
-                        <h3>Creatina Micronizada ENA</h3>
-                        <p>Mejora el rendimiento y la recuperación muscular. Ideal para entrenamientos intensos.<br>
-                            - Formula pura con un solo ingrediente: Creatina Micronizada. <br>
-                            - Ideal para personas que realizan ejercicios de FUERZA. <br>
-                            - Disminuye la fatiga luego de la actividad. <br>
-                            - Ayuda al aumento de la fuerza muscular para el aumento de los músculos. <br>
-                            - Se absorbe de manera rápida brindando al organismo energía inmediata. <br>
-                        </p><br>
-                        <p><strong>Precio:</strong> $38.000</p>
-                        <p><strong>Cantidad:</strong> 1</p>
+
+        {% if pedidos and (pedidos|length > 0) %}
+
+            {% for p in pedidos %}
+                <div class="Compra-box">
+
+                    <div style="padding: 10px 0; color: #d2cfcf;">
+                        <strong>Pedido #{{ p["id"] }}</strong>
+                        {% if p["fecha"] %} - {{ p["fecha"] }}{% endif %}
                     </div>
-                </div>
 
-                <div class="Compra-item">
-                    <img src="../../static/img/productos/WheyProducto.jpg" alt="Whey Protein">
-                    <div class="Compra-detalles">
-                        <h3>Whey Protein Star</h3>
-                        <p>Proteína de suero concentrada, perfecta para ganar masa muscular y mejorar la recuperación. <br>
-                            - Whey protein concentrate (WPC): perfil completo de aminoácidos esenciales, brindando la mejor <br>
-                            calidad de proteínas para aumentar la energía durante el entrenamiento. <br>
-                            - Whey Protein Isolate (WPI): máxima pureza. Bajo en carbohidratos, grasas y fácil de digerir logrando una mayor absorción de la proteína. <br>
-                        </p><br>
-                        <p><strong>Precio:</strong> $45.000</p>
-                        <p><strong>Cantidad:</strong> 2</p><br>
+                    <div class="Compra-info">
+
+                        {% if p["items"] and (p["items"]|length > 0) %}
+                            {% for it in p["items"] %}
+                                <div class="Compra-item">
+                                    <img src="{{ it['imagen'] }}" alt="{{ it['nombre'] }}">
+
+                                    <div class="Compra-detalles">
+                                        <h3>{{ it["nombre"] }}</h3>
+
+                                        {% if it["sabor"] %}
+                                            <p><strong>Sabor:</strong> {{ it["sabor"] }}</p>
+                                        {% endif %}
+
+                                        <p>{{ it["descripcion"] }}</p><br>
+
+                                        <p><strong>Precio:</strong> ${{ it["precio"] }}</p>
+                                        <p><strong>Cantidad:</strong> {{ it["cantidad"] }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            <div class="Compra-datos">
+                                <p><strong>Total:</strong> ${{ p["total"] }}</p>
+                            </div>
+                        {% else %}
+                            <p style="color:#d2cfcf;">Este pedido no tiene items.</p>
+                        {% endif %}
+
                     </div>
-                </div>
 
-                <div class="Compra-datos">
-                    <p><strong>Total:</strong> $128.000</p>
-                </div>
-            </div>
+                    <div class="Estado-compra">
+                        <p><strong>Estado del pedido:</strong> {{ p["estado"] }}</p>
+                    </div>
 
-            <div class="Estado-compra">
-                <p><strong>Estado del pedido:</strong></p>
-                <div class="Linea-tiempo">
-                    <span class="estado activo">Pagado</span>
-                    <span class="separador"></span>
-                    <span class="estado">En preparación</span>
-                    <span class="separador"></span>
-                    <span class="estado">Enviado</span>
-                    <span class="separador"></span>
-                    <span class="estado">Entregado</span>
                 </div>
-            </div>
-        </div>
+            {% endfor %}
+
+        {% else %}
+            <p style="color:white; padding: 20px;">Todavía no tenés pedidos.</p>
+        {% endif %}
+
     </div>
 
     <footer class="Pie-pagina">
@@ -110,16 +116,16 @@
         </div>
         <div class="ANMAT">
             <p>
-                Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br> cumpliendo
-                requisitos de seguridad, calidad y registro.
+                Productos regulados y verificados por la <span class="Resaltado-ANMAT">ANMAT</span>,<br>
+                cumpliendo requisitos de seguridad, calidad y registro.
             </p>
         </div>
         <div class="Metodos-pago">
             <i class="fab fa-cc-visa"></i>
             <i class="fab fa-cc-mastercard"></i>
-            <img src="../../static/img/logos/mercadopago.png" alt="Mercado Pago">
+            <img src="{{ url_for('static', filename='img/logos/mercadopago.png') }}" alt="Mercado Pago">
         </div>
     </footer>
-</body>
 
+</body>
 </html>

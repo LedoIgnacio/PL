@@ -72,12 +72,16 @@
         <p class="Instruccion">
             <strong>
                 Por favor transferir el monto al cvu: 000000123456789101112131<br>
-                y redirigirse a "Mis compras" donde al confirmar el pago, el vendedor
-                actualizará el estado de su pedido.
+                y luego finalizá la compra para que aparezca en "Mis compras".
             </strong>
         </p>
 
-        <a href="{{ url_for('mis_compras') }}" class="Boton-Redireccion">Mis Compras</a>
+        <form method="POST" action="{{ url_for('pedido_finalizar_route') }}">
+            <button type="submit" class="Boton-Redireccion">Finalizar Compra</button>
+        </form>
+
+        <br>
+        <a href="{{ url_for('mis_compras') }}" class="Boton-Redireccion">Ir a Mis Compras</a>
     </div>
 
     <footer class="Pie-pagina">
